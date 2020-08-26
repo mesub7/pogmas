@@ -1,0 +1,9 @@
+{
+    "apps": [{
+        "name": "Pogmas",
+        "cwd": "./",
+        "script": "main.py",
+        "args": "",
+        "interpreter": "python3"
+    }]
+}
