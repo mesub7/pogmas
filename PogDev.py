@@ -2,6 +2,7 @@ import discord
 from discord.ext import commands
 import logging
 import time
+import datetime
 
 logger = logging.getLogger('discord')
 logger.setLevel(logging.INFO)
@@ -26,7 +27,7 @@ async def ping(ctx):
     end = time.perf_counter()
     duration = (end - start) * 1000
     await message.edit(content='Pong! {:.2f}ms'.format(duration))
-    
+
 @bot.command(description='Some info about the bot.')
 async def about(ctx):
     embed = discord.Embed(title="Pogmas", colour=discord.Colour(0x38fe), description="A simple discord bot for Transport Dash, built and maintained by mesub#0556.")
@@ -35,6 +36,16 @@ async def about(ctx):
     embed.add_field(name="About", value="This is just a simple bot to make some tasks in Transport Dash a little easier. Don't expect much Functionality outside of it 😄.")
     embed.add_field(name="Source code", value="If you want to play around with the bot or run an instance of it, then the code can be found [here](https://github.com/mesub7/pogmas)")
     await ctx.send(embed=embed)
+
+@bot.command(description='Restarts the bot.')
+async def restart(ctx):
+    bot_owner_id = 414530505585721357
+    restart = True
+    if ctx.author.id == bot_owner_id:
+        message = await ctx.send("Ok! I'll restart now...")
+        await bot.close()
+    else:
+        await ctx.send("You don't need to use this command :)")
 
 @bot.event
 async def on_message(message):
@@ -45,7 +56,7 @@ async def on_message(message):
         await message.add_reaction(emoji)
         await message.add_reaction(emoji1)
     await bot.process_commands(message)
-        
+
 
 @bot.event
 async def on_ready():
