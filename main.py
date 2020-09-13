@@ -35,6 +35,15 @@ async def about(ctx):
     embed.add_field(name="About", value="This is just a simple bot to make some tasks in Transport Dash a little easier. Don't expect much Functionality outside of it 😄.")
     embed.add_field(name="Source code", value="If you want to play around with the bot or run an instance of it, then the code can be found [here](https://github.com/mesub7/pogmas)")
     await ctx.send(embed=embed)
+
+@bot.command(description='Restarts the bot.')
+async def restart(ctx):
+    bot_owner_id = 414530505585721357
+    if ctx.author.id == bot_owner_id:
+        message = await ctx.send("Ok! I'll restart now...")
+        await bot.close()
+    else:
+        await ctx.send("You don't need to use this command :)")
     
 @bot.event
 async def on_message(message):
