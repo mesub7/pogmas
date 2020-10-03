@@ -49,10 +49,11 @@ async def restart(ctx):
         await ctx.send("You don't need to use this command :)")
 
 @bot.command(hidden=True)
-@commands.has_any_role(407585313129758720, 521372852952498179)
+@commands.has_any_role(407585313129758720, 521372852952498179, 746485340545613915)
 async def say(ctx, channel:discord.TextChannel, *, words:str):
         channel = channel
         await channel.send(words)
+        await ctx.message.delete()
 
 # If they don't have a role for it
 @say.error
@@ -60,10 +61,34 @@ async def say_error(ctx, error):
     if isinstance(error, discord.ext.commands.errors.MissingAnyRole):
         await ctx.send("You cannot run this command as you don't have the role required.")
 
+@bot.command(hidden=True)
+@commands.has_any_role(407585313129758720, 521372852952498179, 746485340545613915)
+async def dm(ctx, member:discord.Member, *, words):
+    user = member
+    await user.send(words)
+    await ctx.message.delete()
+
+# If they don't have the role
+@dm.error
+async def dm_error(ctx, error):
+    if isinstance(error, discord.ext.commands.errors.MissingAnyRole):
+        await ctx.send("You cannot run this command as you don't have the role required.")
+
 @bot.command(description="Produces a random number from 1!")
 async def random(ctx, limit):
     result = randint(1, int(limit))
     await ctx.send("The result is: %s!" % result)
+
+@bot.command(description="Checks how pog somebody is!")
+async def pog(ctx, member:discord.Member):
+    pog_level = randint(1, 99)
+    bot_owner_id = 414530505585721357
+    if member.id == bot.user.id:
+        await ctx.send("I am 100% pog. No question.")
+    elif member.id == bot_owner_id:
+            await ctx.send("Mesub is 100% pog! (As always 😉)")
+    else:
+        await ctx.send(f"This time, I would say that {member.name} is {pog_level}% pog.")
 
 @bot.command(description="See how long the bot has been online for!")
 async def uptime(ctx):
@@ -90,7 +115,7 @@ async def on_ready():
     print('Logged on as' + ' ' + str(bot.user))
     print('User ID is:' + ' ' + str (bot.user.id))
     print('------')
-    activity = discord.Activity(name='the days go by...', type=discord.ActivityType.watching)
+    activity = discord.Activity(name='with my crush Auttaja! 😍😍', type=discord.ActivityType.playing)
     await bot.change_presence(activity=activity)
 
 
