@@ -49,6 +49,9 @@ class CommandErrorHandler(commands.Cog):
             if ctx.command.qualified_name in ("load", "unload", "reload", "status", "activity", "jsk py"):
                 await ctx.send("Command execution failed: You are not the bot owner. (10 points for finding this command though.)")
 
+        elif isinstance(error, discord.ext.commands.DisabledCommand):
+            if ctx.command.qualified_name in ("cut"):
+                await ctx.send("Command execution failed: Command is disabled and cannot be run, sorry.")
         else:
             # All other Errors not returned come here. And we can just print the default TraceBack.
             print(f'Ignoring exception in command {ctx.command}:', file=sys.stderr)
