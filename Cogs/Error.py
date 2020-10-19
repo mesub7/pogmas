@@ -57,7 +57,7 @@ class CommandErrorHandler(commands.Cog):
             await channel.send(f'An error occured with command `{ctx.command}` in cog `{ctx.cog}`.\
             \n The command was invoked in <#{ctx.channel.id}> by `{ctx.author}`.\nThe server this was invoked in was `{ctx.guild}`. \nJumplink to command execution: {ctx.message.jump_url} . \nException:')
             await channel.send(f'```py\n{traceback.format_exception(type(error), error, error.__traceback__)}```')
-            embed = discord.Embed(title="⚠ An error occured ⚠", colour=discord.Colour.red(), description="An unexpected error has occured, this should never happen. I have sent details to mesub#0556.")
+            embed = discord.Embed(title="⚠ An error occurred ⚠", colour=discord.Colour.red(), description="An unexpected error has occured, this should never happen. I have sent details to mesub#0556.")
             await ctx.send(embed=embed)
 
 
