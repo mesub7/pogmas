@@ -1,9 +1,7 @@
 import discord
 from discord.ext import tasks, commands
 import logging
-import time
 from datetime import datetime
-from random import randint
 
 logger = logging.getLogger('discord')
 logger.setLevel(logging.INFO)
@@ -19,11 +17,11 @@ print('Attempting to connect to discord...')
 # The other sutff
 
 token = open("tokendev.txt","r").readline()
-bot = commands.Bot(command_prefix='c')
+bot = commands.Bot(command_prefix='pd')
 bot.launch_time = datetime.utcnow()
 
 
-initial_extensions = ['Cogs.Admin', 'Cogs.Fun', 'Cogs.Utility', 'Cogs.Error']
+initial_extensions = ['Cogs.Admin', 'Cogs.Fun', 'Cogs.Utility', 'Cogs.Error', 'Cogs.TD']
 
 if __name__ == '__main__':
     for extension in initial_extensions:
