@@ -35,7 +35,7 @@ class Fun(commands.Cog):
          else:
              await ctx.send(f"This time, I would say that {member.name} is {pog_level}% pog.")
 
-     @commands.command(description="Likes somebody's cut.", help="I like ya cut g!")
+     @commands.command(description="Likes somebody's cut.", help="I like ya cut g!", enabled=False)
      async def cut(self, ctx, member:discord.Member=None):
          bot_owner_id = 414530505585721357
          if member is None and ctx.author.id == bot_owner_id:
