@@ -1,8 +1,8 @@
 {
     "apps": [{
-        "name": "Pogmas",
+        "name": "Pogmas - Dev",
         "cwd": "./",
-        "script": "Cogmas.py",
+        "script": "CogDev.py",
         "args": "",
         "interpreter": "python3"
     }]
