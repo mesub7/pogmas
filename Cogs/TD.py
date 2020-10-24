@@ -15,6 +15,6 @@ class TD(commands.Cog):
             await message.add_reaction(emoji)
             asyncio.sleep(1)
             await message.add_reaction(emoji1)
-        await self.bot.process_commands(message)
+
 def setup(bot):
     bot.add_cog(TD(bot))
