@@ -70,7 +70,7 @@ class Admin(commands.Cog):
 
      @commands.is_owner()
      @commands.command(name="status", hidden=True, aliases=["online"])
-     async def online(self, ctx, icon:str = None, status:str = None, words:str = None):
+     async def online(self, ctx, icon:str = None, status:str = None, *, words:str = None):
          if icon.lower() in (None,"g", "online"):
              if status is None:
                  await self.bot.change_presence(activity=None)
