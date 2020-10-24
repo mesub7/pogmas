@@ -17,7 +17,7 @@ print('Attempting to connect to discord...')
 # The other sutff
 
 token = open("tokendev.txt","r").readline()
-bot = commands.Bot(command_prefix='pd', actvity=discord.Activity(type=activity=discord.Activity(type=discord.ActivityType.watching, name=JoshiWoshi04's videos.)))
+bot = commands.Bot(command_prefix='pd', actvity=discord.Activity(type=discord.ActivityType.watching, name="JoshiWoshi04's videos."))
 bot.launch_time = datetime.utcnow()
 
 
