@@ -17,7 +17,7 @@ print('Attempting to connect to discord...')
 # The other sutff
 
 token = open("tokendev.txt","r").readline()
-bot = commands.Bot(command_prefix='pd')
+bot = commands.Bot(command_prefix='pd', actvity=discord.Activity(type=activity=discord.Activity(type=discord.ActivityType.watching, name=JoshiWoshi04's videos.)))
 bot.launch_time = datetime.utcnow()
 
 
@@ -35,8 +35,6 @@ async def on_ready():
     print('Logged on as' + ' ' + str(bot.user))
     print('User ID is:' + ' ' + str (bot.user.id))
     print('------')
-    activity = discord.Activity(name='mesub breathe life into me by adding code. Experimental.', type=discord.ActivityType.watching)
-    await bot.change_presence(activity=activity)
 
 
 bot.run(token)

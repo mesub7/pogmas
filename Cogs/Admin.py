@@ -68,71 +68,60 @@ class Admin(commands.Cog):
          else:
              await ctx.send(f'`{cog}` has been hot-loaded! 🔥')
 
-
-
      @commands.is_owner()
-     @commands.command(name="status", hidden=True)
+     @commands.command(name="status", hidden=True, aliases=["online"])
      async def online(self, ctx, icon:str = None, status:str = None, words:str = None):
          if icon.lower() in (None,"g", "online"):
              if status is None:
                  await self.bot.change_presence(activity=None)
                  await ctx.send("Activity set to nothing and status set to online!")
              elif status.lower() in ("playing", "p", "play", "game"):
-                 await self.bot.change_presence(status=discord.status.Online, activity=discord.Game(name=words))
+                 await self.bot.change_presence(status=discord.Status.online, activity=discord.Game(name=words))
                  await ctx.send(f"I will now play {words} and be online!")
              elif status.lower() in ("watching", "w", "watch", "tv"):
-                 await self.bot.change_presence(status=discord.status.Online, activity=discord.Activity(type=discord.ActivityType.watching, name=words))
-                 await ctx.send(f"I will now watch {an} and be online!")
+                 await self.bot.change_presence(status=discord.Status.online, activity=discord.Activity(type=discord.ActivityType.watching, name=words))
+                 await ctx.send(f"I will now watch {words} and be online!")
              elif status.lower() in ("listening", "l", "listen", "song"):
-                 await self.bot.change_presence(status=discord.status.Online, activity=discord.Activity(type=discord.ActivityType.listening, name=words))
-                 await ctx.send(f"I will now listen to {an}! and be online")
-             elif status.lower() in ("listening", "l", "listen", "song"):
-                 await self.bot.change_presence(status=discord.status.Online, activity=discord.Activity(type=discord.ActivityType.listening, name=words))
-                 await ctx.send(f"I will now listen to {an} and be online!")
+                 await self.bot.change_presence(status=discord.Status.online, activity=discord.Activity(type=discord.ActivityType.listening, name=words))
+                 await ctx.send(f"I will now listen to {words} and be online!")
              elif status.lower() in ("competing", "c", "compete", "battle"):
-                 # await self.bot.change_presence(status=discord.status.Online, activity=discord.Activity(type=discord.ActivityType.competing, name=words))
+                 # await self.bot.change_presence(status=discord.Status.online, activity=discord.Activity(type=discord.ActivityType.competing, name=words))
                  await ctx.send("Hang on! (will be in next update.)")
              else:
                  await ctx.send("Invalid option.")
          elif icon.lower() in ("idle","yellow", "away", "y"):
              if status is None:
-                 await self.bot.change_presence(status=discprd.status.idle)
+                 await self.bot.change_presence(status=discord.Status.idle)
                  await ctx.send("Activity set to nothing and status set to idle!")
              elif status.lower() in ("playing", "p", "play", "game"):
-                 await self.bot.change_presence(status=discord.status.idle, activity=discord.Game(name=words))
+                 await self.bot.change_presence(status=discord.Status.idle, activity=discord.Game(name=words))
                  await ctx.send(f"I will now play {words} and be idle!")
              elif status.lower() in ("watching", "w", "watch", "tv"):
-                 await self.bot.change_presence(status=discord.status.idle, activity=discord.Activity(type=discord.ActivityType.watching, name=words))
-                 await ctx.send(f"I will now watch {an} and be idle!")
+                 await self.bot.change_presence(status=discord.Status.idle, activity=discord.Activity(type=discord.ActivityType.watching, name=words))
+                 await ctx.send(f"I will now watch {words} and be idle!")
              elif status.lower() in ("listening", "l", "listen", "song"):
-                 await self.bot.change_presence(status=discord.status.idle, activity=discord.Activity(type=discord.ActivityType.listening, name=words))
-                 await ctx.send(f"I will now listen to {an}! and be idle")
-             elif status.lower() in ("listening", "l", "listen", "song"):
-                 await self.bot.change_presence(status=discord.status.idle, activity=discord.Activity(type=discord.ActivityType.listening, name=words))
-                 await ctx.send(f"I will now listen to {an} and be idle!")
+                 await self.bot.change_presence(status=discord.Status.idle, activity=discord.Activity(type=discord.ActivityType.listening, name=words))
+                 await ctx.send(f"I will now listen to {words} and be idle!")
              elif status.lower() in ("competing", "c", "compete", "battle"):
-                 # await self.bot.change_presence(status=discord.status.idle, activity=discord.Activity(type=discord.ActivityType.competing, name=words))
+                 # await self.bot.change_presence(status=discord.Status.idle, activity=discord.Activity(type=discord.ActivityType.competing, name=words))
                  await ctx.send("Hang on! (will be in next update.)")
              else:
                  await ctx.send("Invalid option.")
          elif icon.lower() in ("dnd", "red", "r"):
              if status is None:
-                 await self.bot.change_presence(activity=None)
+                 await self.bot.change_presence(status=discord.Stauts.dnd)
                  await ctx.send("Activity set to nothing and status set to dnd!")
              elif status.lower() in ("playing", "p", "play", "game"):
-                 await self.bot.change_presence(status=discord.status.dnd, activity=discord.Game(name=words))
+                 await self.bot.change_presence(status=discord.Status.dnd, activity=discord.Game(name=words))
                  await ctx.send(f"I will now play {words} and be dnd!")
              elif status.lower() in ("watching", "w", "watch", "tv"):
-                 await self.bot.change_presence(status=discord.status.dnd, activity=discord.Activity(type=discord.ActivityType.watching, name=words))
-                 await ctx.send(f"I will now watch {an} and be dnd!")
+                 await self.bot.change_presence(status=discord.Status.dnd, activity=discord.Activity(type=discord.ActivityType.watching, name=words))
+                 await ctx.send(f"I will now watch {words} and be dnd!")
              elif status.lower() in ("listening", "l", "listen", "song"):
-                 await self.bot.change_presence(status=discord.status.dnd, activity=discord.Activity(type=discord.ActivityType.listening, name=words))
-                 await ctx.send(f"I will now listen to {an}! and be dnd")
-             elif status.lower() in ("listening", "l", "listen", "song"):
-                 await self.bot.change_presence(status=discord.status.dnd, activity=discord.Activity(type=discord.ActivityType.listening, name=words))
-                 await ctx.send(f"I will now listen to {an} and be dnd!")
+                 await self.bot.change_presence(status=discord.Status.dnd, activity=discord.Activity(type=discord.ActivityType.listening, name=words))
+                 await ctx.send(f"I will now listen to {words}! and be dnd")
              elif status.lower() in ("competing", "c", "compete", "battle"):
-                 # await self.bot.change_presence(status=discord.status.dnd, activity=discord.Activity(type=discord.ActivityType.competing, name=words))
+                 # await self.bot.change_presence(status=discord.Status.dnd, activity=discord.Activity(type=discord.ActivityType.competing, name=words))
                  await ctx.send("Hang on! (will be in next update.)")
              else:
                  await ctx.send("Invalid option")
