@@ -35,5 +35,11 @@ class Utility(commands.Cog):
         days, hours = divmod(hours, 24)
         await ctx.send(f"I have been up for: {days}d, {hours}h, {minutes}m, and {seconds}s")
 
+    @commands.Cog.listener()
+    async def on_message(self, message):
+        channel = self.bot.get_channel(769941819344814140)
+        if self.bot.user.mentioned_in(message):
+            embed = discord.Embed(title="I was mentioned!", colour=discord.Colour.purple(), description=f"I was mentioned by `{message.author}` in <#{message.channel.id}> in the server `{message.guild}` . \n Content: \"{message.content}\" \n Jumplink: {message.jump_url}.")
+            await channel.send(embed=embed)
 def setup(bot):
     bot.add_cog(Utility(bot))
