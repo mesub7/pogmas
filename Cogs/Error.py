@@ -52,6 +52,18 @@ class CommandErrorHandler(commands.Cog):
         elif isinstance(error, discord.ext.commands.DisabledCommand):
             if ctx.command.qualified_name in ("cut"):
                 await ctx.send("Command execution failed: Command is disabled and cannot be run, sorry.")
+
+        elif isinstance(error, discord.ext.commands.BadArgument):
+            if ctx.command.qualified_name in ("say"):
+                await ctx.send("Command execution failed: Channel not found.")
+
+        elif isinstance(error, discord.ext.commands.DisabledCommand):
+            if ctx.command.qualified_name in ("dm"):
+                await ctx.send("Command execution failed: User not found.")
+
+        elif isinstance(error, discord.ext.commands.MissingRequiredArgument):
+            await ctx.send("Command execution failed: Argument is missing! Correct usage:")
+            await ctx.send_help(ctx.command)
         else:
             # All other Errors not returned come here. And we can just print the default TraceBack.
             print(f'Ignoring exception in command {ctx.command}:', file=sys.stderr)
