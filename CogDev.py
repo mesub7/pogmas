@@ -19,7 +19,7 @@ print('Attempting to connect to discord...')
 token = open("tokendev.txt","r").readline()
 bot = commands.Bot(command_prefix='pd', actvity=discord.Activity(type=discord.ActivityType.watching, name="JoshiWoshi04's videos."))
 bot.launch_time = datetime.utcnow()
-
+bot.owner_id = 414530505585721357
 
 initial_extensions = ['Cogs.Admin', 'Cogs.Fun', 'Cogs.Utility', 'Cogs.Error', 'Cogs.TD']
 
