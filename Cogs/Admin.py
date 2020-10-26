@@ -15,25 +15,36 @@ class Admin(commands.Cog):
           else:
                await ctx.send("You don't need to use this command :)")
 
+     async def lvl4(ctx):
+         return ctx.author.id in (252504297772679168, 378924582452723734, 325357652752203777, 240035755458691072,\
+         439784355343237151, 290619509641838603, 390978899645038602, 414530505585721357)
+
      @commands.command(hidden=True)
-     @commands.has_any_role(407585313129758720, 521372852952498179, 746485340545613915)
+     @commands.check(lvl4)
      async def say(self, ctx, channel:discord.TextChannel, *, words:str):
           await ctx.message.delete()
           await channel.trigger_typing()
-          await asyncio.sleep(3)
+          if len(words) < 5:
+              await asyncio.sleep(1)
+          elif len(words) < 10:
+              await asyncio.sleep(2)
+          elif len(words) < 20:
+              await asyncio.sleep(4)
+          else:
+              await asyncio.sleep(6)
           await channel.send(words)
 
 
-    # If they don't have a role for it
+
 
      @commands.command(hidden=True)
-     @commands.has_any_role(407585313129758720, 521372852952498179, 746485340545613915)
+     @commands.check(lvl4)
      async def dm(self, ctx, member:discord.Member, *, words):
          user = member
          await user.send(words)
          await ctx.message.delete()
 
-# If they don't have the role
+
 
      @commands.command(name='load', hidden=True, description="Command which Loads a Module.\
      Remember to use dot path. e.g: Cogs.Admin")
