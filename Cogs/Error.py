@@ -66,8 +66,12 @@ class CommandErrorHandler(commands.Cog):
             await ctx.send_help(ctx.command)
 
         elif isinstance(error, discord.ext.commands.CommandError):
-            await ctx.send("Command execution failed: You are not in the `lvl4` group of users authorised to use this command.\
-            \nIf you think this is a mistake please contact mesub#0556.")
+            if ctx.qualified_name in ("say", "dm"):
+                await ctx.send("Command execution failed: You are not in the `lvl4` group of users authorised to use this command.\
+                \nIf you think this is a mistake please contact mesub#0556.")
+            elif ctx.qualified_name in ("cut"):
+                await ctx.send("Command execution failed: You are not in the `lvl3` (Boosters or channel members) group of users authorised to use this command.\
+                \nIf you think this is a mistake please contact mesub#0556.")
         else:
             # All other Errors not returned come here. And we can just print the default TraceBack.
             print(f'Ignoring exception in command {ctx.command}:', file=sys.stderr)
