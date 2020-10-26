@@ -1,2 +1,4 @@
-.txt
-.log
+*.txt
+*.log
+Cogs/__pycache__
+Cogger.py
