@@ -76,10 +76,12 @@ class CommandErrorHandler(commands.Cog):
             # All other Errors not returned come here. And we can just print the default TraceBack.
             print(f'Ignoring exception in command {ctx.command}:', file=sys.stderr)
             traceback.print_exception(type(error), error, error.__traceback__, file=sys.stderr)
+            py_error = traceback.format_exception(type(error), error, error.__traceback__)
+            py_error = ''.join(py_error)
             channel = self.bot.get_channel(767416350552490025)
-            await channel.send(f'An error occured with command `{ctx.command}` in cog `{ctx.cog}`.\
+            await channel.send(f'An error occured with command `{ctx.command}` in cog `{ctx.cog.qualified_name}`.\
             \n The command was invoked in <#{ctx.channel.id}> by `{ctx.author}`.\nThe server this was invoked in was `{ctx.guild}`. \nJumplink to command execution: {ctx.message.jump_url} . \nException:')
-            await channel.send(f'```py\n{traceback.format_exception(type(error), error, error.__traceback__)}```')
+            await channel.send(f'```py\n{py_error}```')
             embed = discord.Embed(title="⚠ An error occurred ⚠", colour=discord.Colour.red(), description="An unexpected error has occured, this should never happen. I have sent details to mesub#0556.")
             await ctx.send(embed=embed)
 
