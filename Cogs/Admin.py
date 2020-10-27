@@ -28,7 +28,7 @@ class Admin(commands.Cog):
               await asyncio.sleep(1)
           elif len(words) < 10:
               await asyncio.sleep(2)
-          elif len(words) < 20:
+          elif len(words) < 24:
               await asyncio.sleep(4)
           else:
               await asyncio.sleep(6)
