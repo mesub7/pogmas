@@ -50,7 +50,7 @@ class Fun(commands.Cog):
              await ctx.send("Why would like your own cut silly.")
          elif member.id == self.bot.user.id:
              await ctx.send("Glad you like it! (What would you think would happen?)")
-         elif member.id == self.bot.owner.id:
+         elif member.id == self.bot.owner_id:
                  await ctx.send("Command exucution failed: mesub's cut cannot be liked.")
          elif member.id == 242730576195354624:
                 await ctx.send("I refuse to like Auttaja's cut.")
