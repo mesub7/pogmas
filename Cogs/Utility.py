@@ -20,10 +20,10 @@ class Utility(commands.Cog):
     @commands.command(description='Some info about the bot.', help="Some infomation about the bot.")
     async def about(self, ctx):
         user = self.bot.get_user(414530505585721357)
-        embed = discord.Embed(title=str(self.bot.user.name), colour=discord.Colour.blue(), description="A simple discord bot for Transport Dash, built and maintained by mesub#0556.")
+        embed = discord.Embed(title=str(self.bot.user.name), colour=discord.Colour.blue(), description="A simple discord bot for Transport Dash (and qualifying servers), built and maintained by mesub#0556.")
         embed.set_thumbnail(url=self.bot.user.avatar_url)
         embed.set_footer(text="mesub#0556", icon_url=user.avatar_url)
-        embed.add_field(name="About", value="This is just a simple bot to make some tasks in Transport Dash a little easier. Don't expect too much functionality outside it 😄.")
+        embed.add_field(name="About", value="This is just a simple bot to make some tasks in Transport Dash (and qualifying servers) a little easier. Don't expect too much functionality outside it 😄.")
         embed.add_field(name="Source code", value="If you want to play around with the bot or run an instance of it, then the code can be found [here](https://github.com/mesub7/pogmas)")
         await ctx.send(embed=embed)
 
