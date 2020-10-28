@@ -1,6 +1,6 @@
 {
     "apps": [{
-        "name": "Pogmas - Dev",
+        "name": "Pogmas",
         "cwd": "./",
         "script": "Pogmas.py",
         "args": "",
