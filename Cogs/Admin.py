@@ -28,7 +28,7 @@ class Admin(commands.Cog):
               await asyncio.sleep(1)
           elif len(words) < 10:
               await asyncio.sleep(2)
-          elif len(words) < 20:
+          elif len(words) < 24:
               await asyncio.sleep(4)
           else:
               await asyncio.sleep(6)
@@ -83,7 +83,7 @@ class Admin(commands.Cog):
      @commands.command(name="status", hidden=True, aliases=["online"])
      async def online(self, ctx, icon:str = None, status:str = None, *, words:str = None):
          if icon.lower() in (None,"g", "online"):
-             if status is None:
+             if status in (None):
                  await self.bot.change_presence(activity=None)
                  await ctx.send("Activity set to nothing and status set to online!")
              elif status.lower() in ("playing", "p", "play", "game"):
