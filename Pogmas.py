@@ -17,7 +17,7 @@ print('Attempting to connect to discord...')
 # The other sutff
 intents = discord.Intents.default()
 intents.members = True
-token = open("tokendev.txt","r").readline()
+token = open("token.txt","r").readline()
 bot = commands.Bot(command_prefix='p', status=discord.Status.online, actvity=discord.Activity(type=discord.ActivityType.watching, name="JoshiWoshi04's videos."), intents=intents)
 bot.launch_time = datetime.utcnow()
 bot.owner_id = 414530505585721357
