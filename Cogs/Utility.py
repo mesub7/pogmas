@@ -46,9 +46,9 @@ class Utility(commands.Cog):
                 await channel.send(embed=embed)
 
     @commands.command(name="check", description="Checks if you are part of an internal permission group to run elevated commands"\
-    , help="Are you elite?")
+    , help="Are you elite?", enabled=False)
     async def checker(self, ctx):
-        if ctx.author in lvl3():
+        if ctx.author in self.bot.lvl4():
             await ctx.send(2)
 def setup(bot):
     bot.add_cog(Utility(bot))
