@@ -44,5 +44,11 @@ class Utility(commands.Cog):
             else:
                 embed = discord.Embed(title="I was mentioned!", colour=discord.Colour.purple(), description=f"I was mentioned by `{message.author}` in <#{message.channel.id}> in the server `{message.guild}` . \n Content: \"{message.content}\" \n Jumplink: {message.jump_url}.")
                 await channel.send(embed=embed)
+
+    @commands.command(name="check", description="Checks if you are part of an internal permission group to run elevated commands"\
+    , help="Are you elite?")
+    async def checker(self, ctx):
+        if ctx.author in lvl3():
+            await ctx.send(2)
 def setup(bot):
     bot.add_cog(Utility(bot))
