@@ -2,7 +2,8 @@ import discord
 from discord.ext import commands
 import time
 from datetime import datetime
-
+import Cogs.Checks as k
+import asyncio
 
 class Utility(commands.Cog):
     def __init__(self, bot):
@@ -46,9 +47,15 @@ class Utility(commands.Cog):
                 await channel.send(embed=embed)
 
     @commands.command(name="check", description="Checks if you are part of an internal permission group to run elevated commands"\
-    , help="Are you elite?", enabled=False)
+    , help="Are you elite?")
     async def checker(self, ctx):
-        if ctx.author in self.bot.lvl4():
-            await ctx.send(2)
+        if k.lvl3():
+            msg = await ctx.send("Checking...")
+            await ctx.channel.trigger_typing()
+            await asyncio.sleep(5)
+            await msg.edit(content="You are in: `level 3`.")
+        else:
+            await ctx.send("Not yet!")
+
 def setup(bot):
     bot.add_cog(Utility(bot))
