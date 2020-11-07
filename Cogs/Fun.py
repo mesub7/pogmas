@@ -1,6 +1,7 @@
 import discord
 from discord.ext import commands
 from random import randint
+import Cogs.Checks
 
 
 
@@ -8,7 +9,8 @@ class Fun(commands.Cog):
      def __init__(self, bot):
          self.bot = bot
      global bot_owner_id
-
+     level_3 = Cogs.Checks.lvl3
+     
      @commands.command(description="Produces a random number from 1!", help="Produces a random number from 1!")
      async def random(self, ctx, limit=None):
          if limit is None:
@@ -34,26 +36,25 @@ class Fun(commands.Cog):
          else:
              await ctx.send(f"This time, I would say that {member.name} is {pog_level}% pog.")
 
-     def lvl3(**roles):
-         original = commands.has_any_role(770380094866063380, 660926272750223361, 754287737439387679, 407585313129758720, 521372852952498179).predicate
-         async def lvl3_extend(ctx):
-             return ctx.author.id == 414530505585721357
-         return commands.check(lvl3_extend)
-
-     @lvl3()
+     @level_3()
      @commands.command(description="Likes somebody's cut.", help="I like ya cut g!")
      async def cut(self, ctx, member:discord.Member=None):
          if member is None and ctx.author.id == self.bot.owner_id:
              await ctx.send("Why would you like your own cut mesub?")
+             return
          elif member is None:
              member = ctx.author
              await ctx.send("Why would like your own cut silly.")
+             return
          elif member.id == self.bot.user.id:
              await ctx.send("Glad you like it! (What would you think would happen?)")
+             return
          elif member.id == self.bot.owner_id:
                  await ctx.send("Command exucution failed: mesub's cut cannot be liked.")
+                 return
          elif member.id == 242730576195354624:
                 await ctx.send("I refuse to like Auttaja's cut.")
+                return
          else:
              await ctx.send("Cut liked 👌.")
          def check(user):

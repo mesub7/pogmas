@@ -1,10 +1,24 @@
 import discord
 from discord.ext import commands
 import asyncio
+import Cogs.Checks as k
+
+
 
 class Admin(commands.Cog):
      def __init__(self, bot):
         self.bot = bot
+        level_4 = k.lvl4
+
+     @commands.is_owner()
+     @commands.command(hidden=True)
+     async def swap(self, ctx, cmdname, alias):
+         cmd = ctx.bot.get_command(cmdname)
+         cmd.aliases.append(alias)
+         # register the modified command
+         ctx.bot.remove_command(cmdname)
+         ctx.bot.add_command(cmd)
+         await ctx.send('Done!')
 
      @commands.command(hidden=True)
      async def restart(self, ctx):
@@ -15,12 +29,9 @@ class Admin(commands.Cog):
           else:
                await ctx.send("You don't need to use this command :)")
 
-     async def lvl4(ctx):
-         return ctx.author.id in (252504297772679168, 378924582452723734, 325357652752203777, 240035755458691072,\
-         439784355343237151, 290619509641838603, 390978899645038602, 414530505585721357)
 
      @commands.command(hidden=True)
-     @commands.check(lvl4)
+     @commands.check(k.lvl4)
      async def say(self, ctx, channel:discord.TextChannel, *, words:str):
           await ctx.message.delete()
           await channel.trigger_typing()
@@ -30,6 +41,8 @@ class Admin(commands.Cog):
               await asyncio.sleep(2)
           elif len(words) < 24:
               await asyncio.sleep(4)
+          elif len(words) < 24:
+              await asyncio.sleep(5)
           else:
               await asyncio.sleep(6)
           await channel.send(words)
@@ -38,7 +51,7 @@ class Admin(commands.Cog):
 
 
      @commands.command(hidden=True)
-     @commands.check(lvl4)
+     @commands.check(k.lvl4)
      async def dm(self, ctx, member:discord.Member, *, words):
          user = member
          await user.send(words)
