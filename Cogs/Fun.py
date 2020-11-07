@@ -1,15 +1,16 @@
 import discord
 from discord.ext import commands
 from random import randint
-import Cogs.Checks
+import Cogs.Checks as k
 
 
 
 class Fun(commands.Cog):
      def __init__(self, bot):
          self.bot = bot
+         level_3 = k.lvl3
      global bot_owner_id
-     level_3 = Cogs.Checks.lvl3
+
 
      @commands.command(description="Produces a random number from 1!", help="Produces a random number from 1!")
      async def random(self, ctx, limit=None):
@@ -36,7 +37,7 @@ class Fun(commands.Cog):
          else:
              await ctx.send(f"This time, I would say that {member.name} is {pog_level}% pog.")
 
-     @level_3()
+     @k.lvl3()
      @commands.command(description="Likes somebody's cut.", help="I like ya cut g!")
      async def cut(self, ctx, member:discord.Member=None):
          if member is None and ctx.author.id == self.bot.owner_id:
