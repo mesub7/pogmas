@@ -4,10 +4,12 @@ from discord.ext import commands
 
 def lvl3():
     def predicate(ctx):
-        return commands.has_any_role(770380094866063380, 660926272750223361, 754287737439387679, 407585313129758720, 521372852952498179)
-    async def lvl3_extend(ctx):
-        return ctx.author.id == 414530505585721357
-    return commands.check(lvl3_extend)
+        role = discord.Role
+        return any(
+        role.id in [770380094866063380, 660926272750223361, 754287737439387679, 407585313129758720, 521372852952498179]
+        for role in ctx.author.roles
+        ) or ctx.author.id == 414530505585721357
+    return commands.check(predicate)
 
 async def lvl4(ctx):
     return ctx.author.id in (252504297772679168, 378924582452723734, 325357652752203777, 240035755458691072,\
