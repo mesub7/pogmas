@@ -2,8 +2,9 @@ import discord
 from discord.ext import commands
 
 
-def lvl3(**roles):
-    original = commands.has_any_role(770380094866063380, 660926272750223361, 754287737439387679, 407585313129758720, 521372852952498179).predicate
+def lvl3():
+    def predicate(ctx):
+        return commands.has_any_role(770380094866063380, 660926272750223361, 754287737439387679, 407585313129758720, 521372852952498179)
     async def lvl3_extend(ctx):
         return ctx.author.id == 414530505585721357
     return commands.check(lvl3_extend)

@@ -10,7 +10,7 @@ class Fun(commands.Cog):
          self.bot = bot
      global bot_owner_id
      level_3 = Cogs.Checks.lvl3
-     
+
      @commands.command(description="Produces a random number from 1!", help="Produces a random number from 1!")
      async def random(self, ctx, limit=None):
          if limit is None:
@@ -58,7 +58,7 @@ class Fun(commands.Cog):
          else:
              await ctx.send("Cut liked 👌.")
          def check(user):
-             return user.author.id == member.id and user.author.id != ctx.author.id
+             return user.author.id == member.id
          cut_liked = await self.bot.wait_for('message', check=check)
          channel = cut_liked.channel
          await channel.send(f"<@{member.id}> New message from {ctx.author}:")
