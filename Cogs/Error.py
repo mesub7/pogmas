@@ -67,6 +67,14 @@ class CommandErrorHandler(commands.Cog):
         elif isinstance(error, discord.ext.commands.DisabledCommand):
             await ctx.send("Command execution failed: Command is disabled and cannot be run, sorry.")
 
+        elif isinstance(error, discord.ext.commands.CommandOnCooldown):
+            await ctx.send(f"Woah there {ctx.author.name}, you're going too fast. Try again in: {int(ctx.command.get_cooldown_retry_after(ctx))}s.")
+
+        elif isinstance(error, discord.ext.commands.MaxConcurrencyReached):
+            if ctx.command.qualified_name in ('cut'):
+                await ctx.send("Command execution failed: All my hands are busy right now; I can only like `3` cuts per server at any one time!")
+            else:
+                await ee()
 
         elif isinstance(error, discord.ext.commands.BadArgument):
             if ctx.command.qualified_name in ("say"):
@@ -76,7 +84,7 @@ class CommandErrorHandler(commands.Cog):
 
         elif isinstance(error, discord.ext.commands.errors.TooManyArguments):
             if ctx.command.qualified_name in ("jishaku py"):
-                await ctx.send("It's either: \n`ceval`\n`cjsk py` or\n`cjishaku py`\nOKay?")
+                await ctx.send("It's either: \n`eval`\n`jsk py` or\n`jishaku py`\nOkay?")
             else:
                 await ee()
 
@@ -99,6 +107,7 @@ class CommandErrorHandler(commands.Cog):
                 \nIf you think this is a mistake please contact mesub#0556.")
             else:
                 await ee()
+
         else:
             # All other Errors not returned come here. And we can just print the default TraceBack.
             await ee()

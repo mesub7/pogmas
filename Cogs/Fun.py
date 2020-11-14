@@ -1,6 +1,7 @@
 import discord
 from discord.ext import commands
 from random import randint
+from discord.ext.commands.cooldowns import BucketType
 import Cogs.Checks as k
 
 
@@ -19,6 +20,7 @@ class Fun(commands.Cog):
              result = randint(1, int(limit))
              await ctx.send("The result is: %s!" % result)
 
+     @commands.cooldown(3,60,BucketType.member)
      @commands.command(description="Checks how pog somebody is!", help="Checks how pog somebody is!")
      async def pog(self, ctx, member:discord.Member=None):
          pog_level = randint(1, 99)
@@ -37,6 +39,7 @@ class Fun(commands.Cog):
              await ctx.send(f"This time, I would say that {member.name} is {pog_level}% pog.")
 
      @k.lvl3()
+     @commands.max_concurrency(3, per=BucketType.guild, wait=False)
      @commands.command(description="Likes somebody's cut.", help="I like ya cut g!")
      async def cut(self, ctx, member:discord.Member=None):
          if member is None and ctx.author.id == self.bot.owner_id:
