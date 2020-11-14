@@ -9,8 +9,9 @@ import Cogs.Checks as k
 class Fun(commands.Cog):
      def __init__(self, bot):
          self.bot = bot
+         level_3 = k.lvl3
      global bot_owner_id
-     level_3 = k.lvl3
+
 
      @commands.command(description="Produces a random number from 1!", help="Produces a random number from 1!")
      async def random(self, ctx, limit=None):
