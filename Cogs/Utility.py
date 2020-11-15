@@ -10,7 +10,7 @@ class Utility(commands.Cog):
         self.bot = bot
         self.bot.launch_time = datetime.utcnow()
 
-    @commands.command(desription="Pings the bot.", help="Pings the bot")
+    @commands.command(desription="Pings the bot.", help="Pings the bot.")
     async def ping(self, ctx):
         start = time.perf_counter()
         message = await ctx.send("Ping...")
@@ -49,13 +49,14 @@ class Utility(commands.Cog):
     @commands.command(name="check", description="Checks if you are part of an internal permission group to run elevated commands"\
     , help="Are you elite?")
     async def checker(self, ctx):
-        if k.lvl3():
-            msg = await ctx.send("Checking...")
-            await ctx.channel.trigger_typing()
-            await asyncio.sleep(5)
+        msg = await ctx.send("Checking...")
+        await asyncio.sleep(5)
+        if k.lvl3() is True:
             await msg.edit(content="You are in: `level 3`.")
+        elif await k.lvl4(ctx):
+            await msg.edit(content="You are in `level 4`.")
         else:
-            await ctx.send("Not yet!")
+            await msg.edit(content="You aren't in any levels.")
 
 def setup(bot):
     bot.add_cog(Utility(bot))
