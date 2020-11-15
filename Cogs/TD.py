@@ -13,7 +13,7 @@ class TD(commands.Cog):
         emoji1 = '\N{THUMBS DOWN SIGN}'
         if channel == int(message.channel.id):
             await message.add_reaction(emoji)
-            asyncio.sleep(1)
+            await asyncio.sleep(1)
             await message.add_reaction(emoji1)
 
 def setup(bot):
