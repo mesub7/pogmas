@@ -95,8 +95,8 @@ class Admin(commands.Cog):
      @commands.is_owner()
      @commands.command(name="status", hidden=True, aliases=["online"])
      async def online(self, ctx, icon:str = None, status:str = None, *, words:str = None):
-         if icon.lower() in (None,"g", "online"):
-             if status in (None):
+         if icon is None or icon.lower() in ("g", "online"):
+             if status is None:
                  await self.bot.change_presence(activity=None)
                  await ctx.send("Activity set to nothing and status set to online!")
              elif status.lower() in ("playing", "p", "play", "game"):
@@ -110,7 +110,7 @@ class Admin(commands.Cog):
                  await ctx.send(f"I will now listen to {words} and be online!")
              elif status.lower() in ("competing", "c", "compete", "battle"):
                  await self.bot.change_presence(status=discord.Status.online, activity=discord.Activity(type=discord.ActivityType.competing, name=words))
-                 await ctx.send(f"I will now compete with {words} and be online!")
+                 await ctx.send(f"I will now compete in {words} and be online!")
              else:
                  await ctx.send("Invalid option.")
          elif icon.lower() in ("idle","yellow", "away", "y"):
@@ -128,7 +128,7 @@ class Admin(commands.Cog):
                  await ctx.send(f"I will now listen to {words} and be idle!")
              elif status.lower() in ("competing", "c", "compete", "battle"):
                  await self.bot.change_presence(status=discord.Status.idle, activity=discord.Activity(type=discord.ActivityType.competing, name=words))
-                 await ctx.send(f"I will now compete with {words} and be idle!")
+                 await ctx.send(f"I will now compete in {words} and be idle!")
              else:
                  await ctx.send("Invalid option.")
          elif icon.lower() in ("dnd", "red", "r"):
@@ -146,7 +146,7 @@ class Admin(commands.Cog):
                  await ctx.send(f"I will now listen to {words}! and be dnd")
              elif status.lower() in ("competing", "c", "compete", "battle"):
                  await self.bot.change_presence(status=discord.Status.dnd, activity=discord.Activity(type=discord.ActivityType.competing, name=words))
-                 await ctx.send(f"I will now compete with {words}! and be dnd")
+                 await ctx.send(f"I will now compete in {words}! and be dnd")
              else:
                  await ctx.send("Invalid option")
          else:
