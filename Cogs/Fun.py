@@ -3,7 +3,7 @@ from discord.ext import commands
 from random import randint
 from discord.ext.commands.cooldowns import BucketType
 import Cogs.Checks as k
-
+import datetime
 
 
 class Fun(commands.Cog):
@@ -68,5 +68,13 @@ class Fun(commands.Cog):
          channel = cut_liked.channel
          await channel.send(f"<@{member.id}> New message from {ctx.author}:")
          await channel.send("https://tenor.com/view/cut-cut-g-ilike-ya-cut-g-meme-callmecarson-gif-18368253")
+
+     @commands.command()
+     async def days(self, ctx):
+         dt  = datetime.datetime
+         now = dt.now()
+         cd=dt(year=now.year, month=12,day=25) - dt(year=now.year, month=now.month, day=now.day)
+         await ctx.send(f'There are `'+str(cd)[:str(cd).find(",")]+'` until Christmas.')
+
 def setup(bot):
     bot.add_cog(Fun(bot))
