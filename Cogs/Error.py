@@ -58,6 +58,9 @@ class CommandErrorHandler(commands.Cog):
                 await ctx.send('Command execution failed: You do not have any authorised roles.\
                 \nIf you think this is a mistake please contact `mesub#0556`.')
 
+        elif isinstance(error, discord.ext.commands.errors.MemberNotFound):
+            await ctx.send("Command execution failed: I can't find that member in this server. Make sure the ID is correct.")
+
         elif isinstance(error, discord.ext.commands.errors.NotOwner):
             if ctx.command.qualified_name in ('jishaku py'):
                 await ctx.send("Evaluation of **python** code can only be executed by the bot owner.")
@@ -85,12 +88,6 @@ class CommandErrorHandler(commands.Cog):
         elif isinstance(error, discord.ext.commands.errors.TooManyArguments):
             if ctx.command.qualified_name in ("jishaku py"):
                 await ctx.send("It's either: \n`eval`\n`jsk py` or\n`jishaku py`\nOkay?")
-            else:
-                await ee()
-
-        elif isinstance(error, discord.ext.commands.DisabledCommand):
-            if ctx.command.qualified_name in ("dm"):
-                await ctx.send("Command execution failed: User not found.")
             else:
                 await ee()
 
