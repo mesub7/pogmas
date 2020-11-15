@@ -49,7 +49,7 @@ class Fun(commands.Cog):
              return
          elif member is None:
              member = ctx.author
-             await ctx.send("Why would like your own cut silly.")
+             await ctx.send("Why would you like your own cut silly.")
              return
          elif member.id == self.bot.user.id:
              await ctx.send("Glad you like it! (What would you think would happen?)")
