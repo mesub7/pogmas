@@ -39,8 +39,8 @@ class Fun(commands.Cog):
          else:
              await ctx.send(f"This time, I would say that {member.name} is {pog_level}% pog.")
 
-     @k.lvl3()
-     @commands.cooldown(1,60,BucketType.member)
+
+     @commands.cooldown(1,240,BucketType.member)
      @commands.max_concurrency(3, per=BucketType.guild, wait=False)
      @commands.command(description="Likes somebody's cut.", help="I like ya cut g!")
      async def cut(self, ctx, member:discord.Member=None):
