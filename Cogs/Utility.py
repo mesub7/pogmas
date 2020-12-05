@@ -51,12 +51,16 @@ class Utility(commands.Cog):
     async def checker(self, ctx):
         msg = await ctx.send("Checking...")
         await asyncio.sleep(5)
-        if k.lvl3() is True:
-            await msg.edit(content="You are in: `level 3`.")
+        if await k.lvl5(ctx):
+            await msg.edit(content="You are in `level 5`.")
         elif await k.lvl4(ctx):
             await msg.edit(content="You are in `level 4`.")
+        elif await k.lvl3(ctx):
+            await msg.edit(content="You are in: `level 3`.")
+        elif k.lvl2():
+            await msg.edit(content="You are in `level 2`.")
         else:
-            await msg.edit(content="You aren't in any levels.")
+            await msg.edit(content="You are in `level 1` (No level).")
 
 def setup(bot):
     bot.add_cog(Utility(bot))
