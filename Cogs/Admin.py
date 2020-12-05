@@ -22,8 +22,7 @@ class Admin(commands.Cog):
 
      @commands.command(hidden=True)
      async def restart(self, ctx):
-          bot_owner_id = 414530505585721357
-          if ctx.author.id == bot_owner_id:
+          if commands.check(k.lvl5):
                message = await ctx.send("Ok! I'll restart now...")
                await self.bot.close()
           else:
@@ -83,7 +82,7 @@ class Admin(commands.Cog):
 
      @commands.command(name='reload', hidden=True, aliases=["hotload", "hl"], description="Command which Reloads a Module.\
      Remember to use dot path. e.g: Cogs.Admin")
-     @commands.is_owner()
+     @commands.check(k.lvl5)
      async def acog_reload(self, ctx, cog: str):
          if cog == 'all':
              for extension in self.bot.initial_extensions:
@@ -97,7 +96,7 @@ class Admin(commands.Cog):
                  await ctx.send(f'**`An error occured:`** ```py\n{type(e).__name__} - {e}\n```')
 
 
-     @commands.is_owner()
+     @commands.check(k.lvl5)
      @commands.command(name="status", hidden=True, aliases=["online"])
      async def online(self, ctx, icon:str = None, status:str = None, *, words:str = None):
          if icon is None or icon.lower() in ("g", "online"):
