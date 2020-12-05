@@ -109,7 +109,16 @@ class CommandErrorHandler(commands.Cog):
             # All other Errors not returned come here. And we can just print the default TraceBack.
             await ee()
 
-
+    @commands.Cog.listener()
+    async def on_error(self, error):
+        print('Ignoring exception here:', file=sys.stderr)
+        traceback.print_exception(type(error), error, error.__traceback__, file=sys.stderr)
+        py_error = traceback.format_exception(type(error), error, error.__traceback__)
+        py_error = ''.join(py_error)
+        channel = self.bot.get_channel(767416350552490025)
+        await channel.send(f'An error occured.\
+        \nException:')
+        await channel.send(f'```py\n{py_error}```')
 
 def setup(bot):
     bot.add_cog(CommandErrorHandler(bot))
