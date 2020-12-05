@@ -22,10 +22,10 @@ bot = commands.Bot(command_prefix='p', status=discord.Status.online, actvity=dis
 bot.launch_time = datetime.utcnow()
 bot.owner_id = 414530505585721357
 
-initial_extensions = ['Cogs.Admin', 'Cogs.Fun', 'Cogs.Utility', 'Cogs.Error', 'Cogs.TD']
+bot.initial_extensions = ['Cogs.Admin', 'Cogs.Fun', 'Cogs.Utility', 'Cogs.Error', 'Cogs.TD']
 
 if __name__ == '__main__':
-    for extension in initial_extensions:
+    for extension in bot.initial_extensions:
         bot.load_extension(extension)
 bot.load_extension('jishaku')
 
