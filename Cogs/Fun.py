@@ -98,8 +98,17 @@ class Fun(commands.Cog):
             await ctx.send("Cut liked 👌.")
         def check(user):
             return user.author.id == member.id and user.channel.category_id not in [497794660681646101, 653685359460483093]
-        cut_liked = await self.bot.wait_for('message', check=check)
-        channel = cut_liked.channel
+        try:
+            cut_liked = await self.bot.wait_for('message', check=check, timeout=7200.0)
+            channel = cut_liked.channel
+        except Exception as error:
+            error = getattr(error, 'original', error)
+            if isinstance(error, asyncio.TimeoutError):
+                await ctx.send(f"{ctx.author.mention}, I got bored of waiting for them so I cancelled it.")
+                return
+            else:
+                await ctx.send(f"{ctx.author.mention}, I can't like their cut for reasons beyond my control.")
+                return
         await channel.send(f"<@{member.id}> New message from {ctx.author}:")
         await channel.send("https://tenor.com/view/cut-cut-g-ilike-ya-cut-g-meme-callmecarson-gif-18368253")
 
@@ -124,7 +133,7 @@ class Fun(commands.Cog):
             def check(message):
                 return message.author == ctx.author and message.channel == ctx.channel and message.content in ("1", "2", "3")
             try:
-                s = await self.bot.wait_for('message', check=check, timeout=10.0)
+                s = await self.bot.wait_for('message', check=check, timeout=30.0)
                 door = int(s.content)
             except asyncio.TimeoutError:
                 feeling_brave = False
