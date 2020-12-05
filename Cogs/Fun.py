@@ -51,20 +51,23 @@ class Fun(commands.Cog):
     @commands.cooldown(3,60,BucketType.member)
     @commands.command(description="Checks how pog somebody is!", help="Checks how pog somebody is!")
     async def pog(self, ctx, member:discord.Member=None):
-        pog_level = randint(1, 99)
-        if member is None and ctx.author.id == self.bot.owner_id:
-            await ctx.send("You are 100% pog! (As always 😉)")
-        elif member is None:
+        pog_level = randint(1, 100)
+        if pog_level == 100:
+            await ctx.send(f"Well this time, I think that {member.name} is off the scale!")
+        else:
+            if member is None and ctx.author.id == self.bot.owner_id:
+                await ctx.send("You are 100% pog! (As always 😉)")
+            elif member is None:
                 member = ctx.author
                 await ctx.send(f"This time, I would say that you are {pog_level}% pog.")
-        elif member.id == self.bot.user.id:
-            await ctx.send("I am 100% pog. No question.")
-        elif member.id == self.bot.owner_id:
+            elif member.id == self.bot.user.id:
+                await ctx.send("I am 100% pog. No question.")
+            elif member.id == self.bot.owner_id:
                 await ctx.send("mesub is 100% pog! (As always 😉)")
-        elif member.id == 242730576195354624:
+            elif member.id == 242730576195354624:
                 await ctx.send("Auttaja is beyond pog 😍😍")
-        else:
-            await ctx.send(f"This time, I would say that {member.name} is {pog_level}% pog.")
+            else:
+                await ctx.send(f"This time, I would say that {member.name} is {pog_level}% pog.")
 
 
     @commands.cooldown(1,240,BucketType.member)
@@ -80,7 +83,7 @@ class Fun(commands.Cog):
             await ctx.send("Why would you like your own cut silly.")
             return
         elif member.bot:
-            await ctx.send("As part of the discord bot framework agreement on 2017, I cannot like another bot's cut.")
+            await ctx.send("As part of the Discord Bot Framework Agreement 2017, I cannot like another bot's cut.")
             return
         elif member.id == self.bot.user.id:
             await ctx.send("Glad you like it! (What would you think would happen?)")
@@ -105,8 +108,36 @@ class Fun(commands.Cog):
         dt  = datetime.datetime
         now = dt.now()
         cd=dt(year=now.year, month=12,day=25) - dt(year=now.year, month=now.month, day=now.day)
-        await ctx.send(f'There are `'+str(cd)[:str(cd).find(",")]+'` until Christmas.')
+        await ctx.send(f'There are `'+str(cd)[:str(cd).find(",")]+'` until Christmas. 🎄')
 
+    @commands.check(k.lvl2)
+    @commands.command(help="Can you avoid the ghosts?", name="ghost", aliases=['gg'])
+    async def gg(self, ctx):
+        feeling_brave = True
+        score = 0
+        while feeling_brave:
+            if score == 0:
+                await ctx.send("__**Ghost Game**__\nThree doors ahead...\nA ghost behind one\n Which one do you choose.. 1, 2 or 3?")
+            else:
+                await ctx.send("Three doors ahead...\nA ghost behind one\n Which one do you choose.. 1, 2 or 3?")
+            gdoor = randint(1,3)
+            def check(message):
+                return message.author == ctx.author and message.channel == ctx.channel and message.content in ("1", "2", "3")
+            try:
+                s = await self.bot.wait_for('message', check=check, timeout=10.0)
+                door = int(s.content)
+            except asyncio.TimeoutError:
+                feeling_brave = False
+                await ctx.send(f"Game over: you took too long. Score `{score}`.")
+                return
+            if door == gdoor:
+                await ctx.send("Ghost! 👻\nRun away!")
+                await ctx.send(f"Game over. Score: `{score}`.")
+                feeling_brave = False
+            else:
+                await ctx.send("No ghost!\nYou enter the next room...")
+                score = score + 1
+# Tic tac toe stuff
     global emoji_dict
     emoji_dict = {
     u"\u2196": 0,
@@ -195,7 +226,7 @@ class Fun(commands.Cog):
         else:
             return
 
-
+    @k.lvl2()
     @commands.command()
     async def ttt(self, ctx, player2: commands.MemberConverter):
         """Starts a Tic-Tac-Toe game with the specified player!"""
