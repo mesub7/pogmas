@@ -84,13 +84,18 @@ class Admin(commands.Cog):
      @commands.command(name='reload', hidden=True, aliases=["hotload", "hl"], description="Command which Reloads a Module.\
      Remember to use dot path. e.g: Cogs.Admin")
      @commands.is_owner()
-     async def acog_reload(self, ctx, *, cog: str):
-         try:
-             self.bot.reload_extension(cog)
-         except Exception as e:
-             await ctx.send(f'**`An error occured:`** ```py\n{type(e).__name__} - {e}\n```')
+     async def acog_reload(self, ctx, cog: str):
+         if cog == 'all':
+             for extension in self.bot.initial_extensions:
+                 self.bot.reload_extension(extension)
+             await ctx.send('All cogs have been reloaded! 🔥')
          else:
-             await ctx.send(f'`{cog}` has been hot-loaded! 🔥')
+             try:
+                 self.bot.reload_extension(cog)
+                 await ctx.send(f'`{cog}` has been hot-loaded! 🔥')
+             except Exception as e:
+                 await ctx.send(f'**`An error occured:`** ```py\n{type(e).__name__} - {e}\n```')
+
 
      @commands.is_owner()
      @commands.command(name="status", hidden=True, aliases=["online"])
