@@ -43,6 +43,10 @@ class Utility(commands.Cog):
             if message.content in ("@everyone", "@here"):
                 pass
             else:
+                try:
+                    await message.add_reaction('<:pogmas:746448167834222722>')
+                except Exception as e:
+                    pass
                 embed = discord.Embed(title="I was mentioned!", colour=discord.Colour.purple(), description=f"I was mentioned by `{message.author}` in <#{message.channel.id}> in the server `{message.guild}` . \n Content: \"{message.content}\" \n Jumplink: {message.jump_url}.")
                 await channel.send(embed=embed)
 
