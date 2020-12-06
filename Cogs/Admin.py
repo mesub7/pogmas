@@ -22,13 +22,25 @@ class Admin(commands.Cog):
 
      @commands.command(hidden=True)
      async def restart(self, ctx):
-          bot_owner_id = 414530505585721357
-          if ctx.author.id == bot_owner_id:
+          if await k.lvl5(ctx):
                message = await ctx.send("Ok! I'll restart now...")
                await self.bot.close()
           else:
                await ctx.send("You don't need to use this command :)")
 
+     @commands.command(hidden=True, name='disable')
+     @commands.check(k.lvl5)
+     async def _disable(self, ctx, command:str):
+         c = self.bot.get_command(command)
+         c.enabled = False
+         await ctx.send(f"Command '{command}' disabled.")
+
+     @commands.command(hidden=True, name='enable')
+     @commands.check(k.lvl5)
+     async def _enable(self, ctx, command:str):
+         c = self.bot.get_command(command)
+         c.enabled = True
+         await ctx.send(f"Command '{command}' enabled.")
 
      @commands.command(hidden=True)
      @commands.check(k.lvl4)
@@ -83,16 +95,21 @@ class Admin(commands.Cog):
 
      @commands.command(name='reload', hidden=True, aliases=["hotload", "hl"], description="Command which Reloads a Module.\
      Remember to use dot path. e.g: Cogs.Admin")
-     @commands.is_owner()
-     async def acog_reload(self, ctx, *, cog: str):
-         try:
-             self.bot.reload_extension(cog)
-         except Exception as e:
-             await ctx.send(f'**`An error occured:`** ```py\n{type(e).__name__} - {e}\n```')
+     @commands.check(k.lvl5)
+     async def acog_reload(self, ctx, cog: str):
+         if cog == 'all':
+             for extension in self.bot.initial_extensions:
+                 self.bot.reload_extension(extension)
+             await ctx.send('All cogs have been reloaded! 🔥')
          else:
-             await ctx.send(f'`{cog}` has been hot-loaded! 🔥')
+             try:
+                 self.bot.reload_extension(cog)
+                 await ctx.send(f'`{cog}` has been hot-loaded! 🔥')
+             except Exception as e:
+                 await ctx.send(f'**`An error occured:`** ```py\n{type(e).__name__} - {e}\n```')
 
-     @commands.is_owner()
+
+     @commands.check(k.lvl5)
      @commands.command(name="status", hidden=True, aliases=["online"])
      async def online(self, ctx, icon:str = None, status:str = None, *, words:str = None):
          if icon is None or icon.lower() in ("g", "online"):
@@ -101,16 +118,16 @@ class Admin(commands.Cog):
                  await ctx.send("Activity set to nothing and status set to online!")
              elif status.lower() in ("playing", "p", "play", "game"):
                  await self.bot.change_presence(status=discord.Status.online, activity=discord.Game(name=words))
-                 await ctx.send(f"I will now play {words} and be online!")
+                 await ctx.send(f"I will now play '{words}' and be online!")
              elif status.lower() in ("watching", "w", "watch", "tv"):
                  await self.bot.change_presence(status=discord.Status.online, activity=discord.Activity(type=discord.ActivityType.watching, name=words))
-                 await ctx.send(f"I will now watch {words} and be online!")
+                 await ctx.send(f"I will now watch '{words}' and be online!")
              elif status.lower() in ("listening", "l", "listen", "song"):
                  await self.bot.change_presence(status=discord.Status.online, activity=discord.Activity(type=discord.ActivityType.listening, name=words))
-                 await ctx.send(f"I will now listen to {words} and be online!")
+                 await ctx.send(f"I will now listen to '{words}' and be online!")
              elif status.lower() in ("competing", "c", "compete", "battle"):
                  await self.bot.change_presence(status=discord.Status.online, activity=discord.Activity(type=discord.ActivityType.competing, name=words))
-                 await ctx.send(f"I will now compete in {words} and be online!")
+                 await ctx.send(f"I will now compete in '{words}' and be online!")
              else:
                  await ctx.send("Invalid option.")
          elif icon.lower() in ("idle","yellow", "away", "y"):
@@ -119,16 +136,16 @@ class Admin(commands.Cog):
                  await ctx.send("Activity set to nothing and status set to idle!")
              elif status.lower() in ("playing", "p", "play", "game"):
                  await self.bot.change_presence(status=discord.Status.idle, activity=discord.Game(name=words))
-                 await ctx.send(f"I will now play {words} and be idle!")
+                 await ctx.send(f"I will now play '{words}' and be idle!")
              elif status.lower() in ("watching", "w", "watch", "tv"):
                  await self.bot.change_presence(status=discord.Status.idle, activity=discord.Activity(type=discord.ActivityType.watching, name=words))
-                 await ctx.send(f"I will now watch {words} and be idle!")
+                 await ctx.send(f"I will now watch '{words}' and be idle!")
              elif status.lower() in ("listening", "l", "listen", "song"):
                  await self.bot.change_presence(status=discord.Status.idle, activity=discord.Activity(type=discord.ActivityType.listening, name=words))
-                 await ctx.send(f"I will now listen to {words} and be idle!")
+                 await ctx.send(f"I will now listen to '{words}' and be idle!")
              elif status.lower() in ("competing", "c", "compete", "battle"):
                  await self.bot.change_presence(status=discord.Status.idle, activity=discord.Activity(type=discord.ActivityType.competing, name=words))
-                 await ctx.send(f"I will now compete in {words} and be idle!")
+                 await ctx.send(f"I will now compete in '{words}' and be idle!")
              else:
                  await ctx.send("Invalid option.")
          elif icon.lower() in ("dnd", "red", "r"):
@@ -137,16 +154,16 @@ class Admin(commands.Cog):
                  await ctx.send("Activity set to nothing and status set to dnd!")
              elif status.lower() in ("playing", "p", "play", "game"):
                  await self.bot.change_presence(status=discord.Status.dnd, activity=discord.Game(name=words))
-                 await ctx.send(f"I will now play {words} and be dnd!")
+                 await ctx.send(f"I will now play '{words}' and be dnd!")
              elif status.lower() in ("watching", "w", "watch", "tv"):
                  await self.bot.change_presence(status=discord.Status.dnd, activity=discord.Activity(type=discord.ActivityType.watching, name=words))
-                 await ctx.send(f"I will now watch {words} and be dnd!")
+                 await ctx.send(f"I will now watch '{words}' and be dnd!")
              elif status.lower() in ("listening", "l", "listen", "song"):
                  await self.bot.change_presence(status=discord.Status.dnd, activity=discord.Activity(type=discord.ActivityType.listening, name=words))
-                 await ctx.send(f"I will now listen to {words}! and be dnd")
+                 await ctx.send(f"I will now listen to '{words}'! and be dnd")
              elif status.lower() in ("competing", "c", "compete", "battle"):
                  await self.bot.change_presence(status=discord.Status.dnd, activity=discord.Activity(type=discord.ActivityType.competing, name=words))
-                 await ctx.send(f"I will now compete in {words}! and be dnd")
+                 await ctx.send(f"I will now compete in '{words}'! and be dnd")
              else:
                  await ctx.send("Invalid option")
          else:

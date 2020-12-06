@@ -2,6 +2,8 @@ import discord
 from discord.ext import commands
 import traceback
 import sys
+import Cogs.Checks as k
+
 
 class CommandErrorHandler(commands.Cog):
 
@@ -76,20 +78,14 @@ class CommandErrorHandler(commands.Cog):
         elif isinstance(error, discord.ext.commands.MaxConcurrencyReached):
             if ctx.command.qualified_name in ('cut'):
                 await ctx.send("Command execution failed: All my hands are busy right now; I can only like `3` cuts per server at any one time!")
-            else:
-                await ee()
 
         elif isinstance(error, discord.ext.commands.BadArgument):
             if ctx.command.qualified_name in ("say"):
                 await ctx.send("Command execution failed: Channel not found.")
-            else:
-                await ee()
 
         elif isinstance(error, discord.ext.commands.errors.TooManyArguments):
             if ctx.command.qualified_name in ("jishaku py"):
                 await ctx.send("It's either: \n`eval`\n`jsk py` or\n`jishaku py`\nOkay?")
-            else:
-                await ee()
 
         elif isinstance(error, discord.ext.commands.MissingRequiredArgument):
             await ctx.send("Command execution failed: Argument is missing! Correct usage:")
@@ -97,19 +93,35 @@ class CommandErrorHandler(commands.Cog):
 
         elif isinstance(error, discord.ext.commands.CommandError):
             if ctx.command.qualified_name in ("say", "dm"):
-                await ctx.send("Command execution failed: You are not in the `lvl4` group of users authorised to use this command.\
+                await ctx.send("This command doesn't exist. Did you mean `uptime`?")
+            elif ctx.command.qualified_name in ("ttt", "ghost"):
+                await ctx.send("Command execution failed: You are not in the `lvl2` (Boosters or channel members) group of users authorised to use this command.\
                 \nIf you think this is a mistake please contact mesub#0556.")
-            elif ctx.command.qualified_name in ("cut"):
-                await ctx.send("Command execution failed: You are not in the `lvl3` (Boosters or channel members) group of users authorised to use this command.\
-                \nIf you think this is a mistake please contact mesub#0556.")
-            else:
-                await ee()
 
+        elif isinstance(error, discord.Forbidden):
+            await ctx.send("Command execution failed: I can't do whatever you wanted me to do because I do not have permissions. Give me permissions and try again.")
+
+        elif isinstance(error, discord.NotFound):
+            await ctx.send("Command execution failed: I can't seem to find that. Ensure the ID is correct and try again.")
         else:
             # All other Errors not returned come here. And we can just print the default TraceBack.
             await ee()
 
+    @commands.Cog.listener()
+    async def on_error(self, error):
+        print('Ignoring exception here:', file=sys.stderr)
+        traceback.print_exception(type(error), error, error.__traceback__, file=sys.stderr)
+        py_error = traceback.format_exception(type(error), error, error.__traceback__)
+        py_error = ''.join(py_error)
+        channel = self.bot.get_channel(767416350552490025)
+        await channel.send(f'An error occured.\
+        \nException:')
+        await channel.send(f'```py\n{py_error}```')
 
+    @commands.check(k.lvl5)
+    @commands.command(hidden=True, name='ee')
+    async def force_error(self, ctx):
+        await ee() #it won't work
 
 def setup(bot):
     bot.add_cog(CommandErrorHandler(bot))

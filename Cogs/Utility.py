@@ -43,6 +43,10 @@ class Utility(commands.Cog):
             if message.content in ("@everyone", "@here"):
                 pass
             else:
+                try:
+                    await message.add_reaction('<:pogmas:746448167834222722>')
+                except Exception as e:
+                    pass
                 embed = discord.Embed(title="I was mentioned!", colour=discord.Colour.purple(), description=f"I was mentioned by `{message.author}` in <#{message.channel.id}> in the server `{message.guild}` . \n Content: \"{message.content}\" \n Jumplink: {message.jump_url}.")
                 await channel.send(embed=embed)
 
@@ -51,12 +55,16 @@ class Utility(commands.Cog):
     async def checker(self, ctx):
         msg = await ctx.send("Checking...")
         await asyncio.sleep(5)
-        if k.lvl3() is True:
-            await msg.edit(content="You are in: `level 3`.")
+        if await k.lvl5(ctx):
+            await msg.edit(content="You are in `level 5`.")
         elif await k.lvl4(ctx):
             await msg.edit(content="You are in `level 4`.")
+        elif await k.lvl3(ctx):
+            await msg.edit(content="You are in: `level 3`.")
+        elif k.lvl2():
+            await msg.edit(content="You are in `level 2`.")
         else:
-            await msg.edit(content="You aren't in any levels.")
+            await msg.edit(content="You are in `level 1` (No level).")
 
 def setup(bot):
     bot.add_cog(Utility(bot))
