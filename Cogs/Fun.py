@@ -26,7 +26,7 @@ SOFTWARE.
 
 import discord
 from discord.ext import commands
-from random import randint
+from random import randint, choice
 from discord.ext.commands.cooldowns import BucketType
 import Cogs.Checks as k
 import datetime
@@ -119,7 +119,7 @@ class Fun(commands.Cog):
         cd=dt(year=now.year, month=12,day=25) - dt(year=now.year, month=now.month, day=now.day)
         await ctx.send(f'There are `'+str(cd)[:str(cd).find(",")]+'` until Christmas. 🎄')
 
-    @commands.check(k.lvl2)
+    @k.lvl2()
     @commands.command(help="Can you avoid the ghosts?", name="ghost", aliases=['gg'])
     async def gg(self, ctx):
         feeling_brave = True
@@ -146,6 +146,15 @@ class Fun(commands.Cog):
             else:
                 await ctx.send("No ghost!\nYou enter the next room...")
                 score = score + 1
+
+    @commands.cooldown(3,40,BucketType.member)
+    @commands.command(help="Produces a random shaun from the mini-bank!")
+    async def shaun(self, ctx):
+        list = ['<:shaunusa:774986283381948466>', '<:shaunup:774986279133773834>', '<:shauntrain:774986281217425428>',\
+        '<:shaunra:774987341142949929>', '<:shaunpm:774986282682155018>', '<:shaunold:774986281334997012>', '<:shaunit:774986278004850689>',\
+        '<:shaunhug:774986283835326466>', '<:shaunhand:774987343353479219>', '<:shaun2:774986280073166900>', '<:shaun:699731917729300603>']
+        await ctx.send(f"This time, it's {choice(list)}!")
+
 # Tic tac toe stuff
     global emoji_dict
     emoji_dict = {
@@ -227,6 +236,10 @@ class Fun(commands.Cog):
 
     def check_for_end(self, grid):
         if 0 not in grid:
+            if self.is_winner([grid[i:i + 3] for i in range(0, len(grid), 3)], 1):
+                return 1
+            elif self.is_winner([grid[i:i + 3] for i in range(0, len(grid), 3)], 2):
+                return 2
             return "draw"
         elif self.is_winner([grid[i:i + 3] for i in range(0, len(grid), 3)], 1):
             return 1
@@ -236,6 +249,7 @@ class Fun(commands.Cog):
             return
 
     @k.lvl2()
+    @commands.guild_only()
     @commands.command()
     async def ttt(self, ctx, player2: commands.MemberConverter):
         """Starts a Tic-Tac-Toe game with the specified player!"""
