@@ -21,9 +21,9 @@ def lvl2():
 async def lvl3(ctx):
     role = discord.Role
     return any(
-    role.id in (481034890792534018)
+    role.id in [481034890792534018]
     for role in ctx.author.roles
-    ) or ctx.author.id in (414530505585721357, 197100324727685121) #Staff or me/Trusted user
+    ) or await lvl5(ctx)  #Staff or me/Trusted user
 
 async def lvl4(ctx):
     return ctx.author.id in (252504297772679168, 378924582452723734, 325357652752203777, 240035755458691072,\
