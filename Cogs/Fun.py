@@ -155,6 +155,22 @@ class Fun(commands.Cog):
         '<:shaunhug:774986283835326466>', '<:shaunhand:774987343353479219>', '<:shaun2:774986280073166900>', '<:shaun:699731917729300603>']
         await ctx.send(f"This time, it's {choice(list)}!")
 
+    @k.lvl2()
+    @commands.guild_only()
+    @commands.command(help="Can you react in time?")
+    async def thumbs(self, ctx):
+        await ctx.message.delete()
+        msg = await ctx.send('Send me that :thumbsup: reaction, Cocker')
+        def check(reaction, user):
+            return user == ctx.author and str(reaction.emoji) == '\U0001f44d'
+        try:
+            reaction, user = await self.bot.wait_for('reaction_add', timeout=randint(1,15), check=check)
+        except asyncio.TimeoutError:
+            await msg.delete()
+            await ctx.send('Fail! :thumbsdown:')
+        else:
+            await msg.delete()
+            await ctx.send(f"Congrats "+str(ctx.author.mention)+" You Did It! :thumbsup:")
 # Tic tac toe stuff
     global emoji_dict
     emoji_dict = {
