@@ -119,6 +119,13 @@ class Fun(commands.Cog):
         cd=dt(year=now.year, month=12,day=25) - dt(year=now.year, month=now.month, day=now.day)
         await ctx.send(f'There are `'+str(cd)[:str(cd).find(",")]+'` until Christmas. 🎄')
 
+    @commands.command(help="How many days until Brexit?!?!")
+    async def brexit(self, ctx):
+        dt  = datetime.datetime
+        now = dt.now()
+        cd=dt(year=2021, month=1,day=1) - dt(year=now.year, month=now.month, day=now.day)
+        await ctx.send(f'There are `'+str(cd)[:str(cd).find(",")]+'` until <:BR:772541846357278791><:EX:772541846358196254><:IT:756911540728496220>')
+
     @k.lvl2()
     @commands.command(help="Can you avoid the ghosts?", name="ghost", aliases=['gg'])
     async def gg(self, ctx):
