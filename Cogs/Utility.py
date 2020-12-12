@@ -58,15 +58,15 @@ class Utility(commands.Cog):
             ctx.author=user
         await asyncio.sleep(5)
         if await k.lvl5(ctx):
-            await msg.edit(content=f"{ctx.author.mention} is in `level 5`.")
+            await msg.edit(content=f"{ctx.author.name} is in `level 5`.")
         elif await k.lvl4(ctx):
-            await msg.edit(content=f"{ctx.author.mention} is in `level 4`.")
+            await msg.edit(content=f"{ctx.author.name} is in `level 4`.")
         elif await k.lvl3(ctx):
-            await msg.edit(content=f"{ctx.author.mention} is in: `level 3`.")
+            await msg.edit(content=f"{ctx.author.name} is in: `level 3`.")
         elif k.lvl2():
-            await msg.edit(content=f"{ctx.author.mention} is in `level 2`.")
+            await msg.edit(content=f"{ctx.author.name} is in `level 2`.")
         else:
-            await msg.edit(content=f"{ctx.author.mention} is in `level 1` (No level).")
+            await msg.edit(content=f"{ctx.author.name} is in `level 1` (No level).")
 
 def setup(bot):
     bot.add_cog(Utility(bot))
