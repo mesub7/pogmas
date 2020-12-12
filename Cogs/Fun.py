@@ -119,6 +119,13 @@ class Fun(commands.Cog):
         cd=dt(year=now.year, month=12,day=25) - dt(year=now.year, month=now.month, day=now.day)
         await ctx.send(f'There are `'+str(cd)[:str(cd).find(",")]+'` until Christmas. 🎄')
 
+    @commands.command(help="How many days until Brexit?!?!")
+    async def brexit(self, ctx):
+        dt  = datetime.datetime
+        now = dt.now()
+        cd=dt(year=2021, month=1,day=1) - dt(year=now.year, month=now.month, day=now.day)
+        await ctx.send(f'There are `'+str(cd)[:str(cd).find(",")]+'` until <:BR:772541846357278791><:EX:772541846358196254><:IT:756911540728496220>')
+
     @k.lvl2()
     @commands.command(help="Can you avoid the ghosts?", name="ghost", aliases=['gg'])
     async def gg(self, ctx):
@@ -155,6 +162,22 @@ class Fun(commands.Cog):
         '<:shaunhug:774986283835326466>', '<:shaunhand:774987343353479219>', '<:shaun2:774986280073166900>', '<:shaun:699731917729300603>']
         await ctx.send(f"This time, it's {choice(list)}!")
 
+    @k.lvl2()
+    @commands.guild_only()
+    @commands.command(help="Can you react in time?")
+    async def thumbs(self, ctx):
+        await ctx.message.delete()
+        msg = await ctx.send('Send me that :thumbsup: reaction, Cocker')
+        def check(reaction, user):
+            return user == ctx.author and str(reaction.emoji) == '\U0001f44d'
+        try:
+            reaction, user = await self.bot.wait_for('reaction_add', timeout=randint(1,15), check=check)
+        except asyncio.TimeoutError:
+            await msg.delete()
+            await ctx.send('Fail! :thumbsdown:')
+        else:
+            await msg.delete()
+            await ctx.send(f"Congrats "+str(ctx.author.mention)+" You Did It! :thumbsup:")
 # Tic tac toe stuff
     global emoji_dict
     emoji_dict = {

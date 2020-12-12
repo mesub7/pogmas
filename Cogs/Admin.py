@@ -45,6 +45,7 @@ class Admin(commands.Cog):
      @commands.command(hidden=True)
      @commands.check(k.lvl4)
      async def say(self, ctx, channel:discord.TextChannel, *, words:str):
+          file=[await attachment.to_file() for attachment in ctx.message.attachments]
           await ctx.message.delete()
           await channel.trigger_typing()
           if len(words) < 5:
@@ -57,7 +58,7 @@ class Admin(commands.Cog):
               await asyncio.sleep(5)
           else:
               await asyncio.sleep(6)
-          await channel.send(words)
+          await channel.send(words, files=file)
 
 
 
