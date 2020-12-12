@@ -29,6 +29,12 @@ if __name__ == '__main__':
         bot.load_extension(extension)
 bot.load_extension('jishaku')
 
+cmd = bot.get_command('jishaku py')
+cmd.aliases.append('eval')
+# register the modified command
+bot.remove_command('jishaku py')
+bot.add_command(cmd)
+
 @bot.event
 async def on_ready():
     print('------')
