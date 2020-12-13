@@ -2,7 +2,7 @@ import discord
 from discord.ext import tasks, commands
 import logging
 from datetime import datetime
-
+import Cogs.Help as h
 logger = logging.getLogger('discord')
 logger.setLevel(logging.INFO)
 handler = logging.FileHandler(filename='discord.log', encoding='utf-8', mode='w')
@@ -18,7 +18,8 @@ print('Attempting to connect to discord...')
 intents = discord.Intents.default()
 intents.members = True
 token = open("token.txt","r").readline()
-bot = commands.Bot(command_prefix='p', status=discord.Status.online, actvity=discord.Activity(type=discord.ActivityType.watching, name="JoshiWoshi04's videos."), intents=intents)
+bot = commands.Bot(command_prefix='p',status=discord.Status.online, actvity=discord.Activity(type=discord.ActivityType.watching, name="JoshiWoshi04's videos."), \
+intents=intents, help_command=h.EmbedHelpCommand())
 bot.launch_time = datetime.utcnow()
 bot.owner_id = 414530505585721357
 
