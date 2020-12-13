@@ -5,13 +5,13 @@ import Cogs.Checks as k
 
 
 
-class Admin(commands.Cog):
+class Admin(commands.Cog, command_attrs=dict(hidden=True)):
      def __init__(self, bot):
         self.bot = bot
         level_4 = k.lvl4
 
      @commands.is_owner()
-     @commands.command(hidden=True)
+     @commands.command()
      async def swap(self, ctx, cmdname, alias):
          cmd = ctx.bot.get_command(cmdname)
          cmd.aliases.append(alias)
@@ -20,7 +20,7 @@ class Admin(commands.Cog):
          ctx.bot.add_command(cmd)
          await ctx.send('Done!')
 
-     @commands.command(hidden=True)
+     @commands.command()
      async def restart(self, ctx):
           if await k.lvl5(ctx):
                message = await ctx.send("Ok! I'll restart now...")
@@ -28,21 +28,21 @@ class Admin(commands.Cog):
           else:
                await ctx.send("You don't need to use this command :)")
 
-     @commands.command(hidden=True, name='disable')
+     @commands.command(name='disable')
      @commands.check(k.lvl5)
      async def _disable(self, ctx, command:str):
          c = self.bot.get_command(command)
          c.enabled = False
          await ctx.send(f"Command '{command}' disabled.")
 
-     @commands.command(hidden=True, name='enable')
+     @commands.command(name='enable')
      @commands.check(k.lvl5)
      async def _enable(self, ctx, command:str):
          c = self.bot.get_command(command)
          c.enabled = True
          await ctx.send(f"Command '{command}' enabled.")
 
-     @commands.command(hidden=True)
+     @commands.command()
      @commands.check(k.lvl4)
      async def say(self, ctx, channel:discord.TextChannel, *, words:str):
           file=[await attachment.to_file() for attachment in ctx.message.attachments]
@@ -63,7 +63,7 @@ class Admin(commands.Cog):
 
 
 
-     @commands.command(hidden=True)
+     @commands.command()
      @commands.check(k.lvl4)
      async def dm(self, ctx, member:discord.Member, *, words):
          user = member
@@ -72,7 +72,7 @@ class Admin(commands.Cog):
 
 
 
-     @commands.command(name='load', hidden=True, description="Command which Loads a Module.\
+     @commands.command(name='load', description="Command which Loads a Module.\
      Remember to use dot path. e.g: Cogs.Admin")
      @commands.is_owner()
      async def acog_load(self, ctx, *, cog: str):
@@ -83,7 +83,7 @@ class Admin(commands.Cog):
          else:
              await ctx.send(f'`{cog}` has been loaded!')
 
-     @commands.command(name='unload', hidden=True, description="Command which Unloads a Module.\
+     @commands.command(name='unload', description="Command which Unloads a Module.\
      Remember to use dot path. e.g: Cogs.Admin")
      @commands.is_owner()
      async def acog_unload(self, ctx, *, cog: str):
@@ -94,7 +94,7 @@ class Admin(commands.Cog):
          else:
              await ctx.send(f'`{cog}` has been unloaded!')
 
-     @commands.command(name='reload', hidden=True, aliases=["hotload", "hl"], description="Command which Reloads a Module.\
+     @commands.command(name='reload', aliases=["hotload", "hl"], description="Command which Reloads a Module.\
      Remember to use dot path. e.g: Cogs.Admin")
      @commands.check(k.lvl5)
      async def acog_reload(self, ctx, cog: str):
@@ -111,7 +111,7 @@ class Admin(commands.Cog):
 
 
      @commands.check(k.lvl5)
-     @commands.command(name="status", hidden=True, aliases=["online"])
+     @commands.command(name="status", aliases=["online"])
      async def online(self, ctx, icon:str = None, status:str = None, *, words:str = None):
          if icon is None or icon.lower() in ("g", "online"):
              if status is None:

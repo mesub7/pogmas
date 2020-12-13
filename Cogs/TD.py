@@ -2,7 +2,7 @@ import discord
 from discord.ext import commands
 import asyncio
 
-class TD(commands.Cog):
+class TD(commands.Cog, command_attrs=dict(hidden=True)):
     def __init__(self, bot):
         self.bot = bot
 
