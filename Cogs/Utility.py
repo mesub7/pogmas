@@ -63,7 +63,7 @@ class Utility(commands.Cog):
             await msg.edit(content=f"{ctx.author.name} is in `level 4`.")
         elif await k.lvl3(ctx):
             await msg.edit(content=f"{ctx.author.name} is in: `level 3`.")
-        elif k.lvl2():
+        elif k.lvl2:
             await msg.edit(content=f"{ctx.author.name} is in `level 2`.")
         else:
             await msg.edit(content=f"{ctx.author.name} is in `level 1` (No level).")
