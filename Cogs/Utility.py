@@ -40,11 +40,8 @@ class Utility(commands.Cog):
     async def on_message(self, message):
         channel = self.bot.get_channel(769941819344814140)
         if self.bot.user.mentioned_in(message):
-            if message.content in ("@everyone", "@here"):
-                pass
-            else:
                 try:
-                    await message.add_reaction('<:pogmas:746448167834222722>')
+                    await message.add_reaction(':pogmas:746448167834222722')
                 except Exception as e:
                     pass
                 embed = discord.Embed(title="I was mentioned!", colour=discord.Colour.purple(), description=f"I was mentioned by `{message.author}` in <#{message.channel.id}> in the server `{message.guild}` . \n Content: \"{message.content}\" \n Jumplink: {message.jump_url}.")
@@ -63,7 +60,7 @@ class Utility(commands.Cog):
             await msg.edit(content=f"{ctx.author.name} is in `level 4`.")
         elif await k.lvl3(ctx):
             await msg.edit(content=f"{ctx.author.name} is in: `level 3`.")
-        elif commands.check(k.lvl2):
+        elif await k.lvl2(ctx):
             await msg.edit(content=f"{ctx.author.name} is in `level 2`.")
         else:
             await msg.edit(content=f"{ctx.author.name} is in `level 1` (No level).")
