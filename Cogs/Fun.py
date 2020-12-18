@@ -37,6 +37,7 @@ class Fun(commands.Cog):
     def __init__(self, bot):
          self.bot = bot
          level_3 = k.lvl3
+         level_2 = k.lvl2
     global bot_owner_id
 
 
@@ -126,7 +127,7 @@ class Fun(commands.Cog):
         cd=dt(year=2021, month=1,day=1) - dt(year=now.year, month=now.month, day=now.day)
         await ctx.send(f'There are `'+str(cd)[:str(cd).find(",")]+'` until <:BR:772541846357278791><:EX:772541846358196254><:IT:756911540728496220>')
 
-    @k.lvl2()
+    @commands.check(k.lvl2)
     @commands.command(help="Can you avoid the ghosts?", name="ghost", aliases=['gg'])
     async def gg(self, ctx):
         feeling_brave = True
@@ -162,7 +163,7 @@ class Fun(commands.Cog):
         '<:shaunhug:774986283835326466>', '<:shaunhand:774987343353479219>', '<:shaun2:774986280073166900>', '<:shaun:699731917729300603>']
         await ctx.send(f"This time, it's {choice(list)}!")
 
-    @k.lvl2()
+    @commands.check(k.lvl2)
     @commands.guild_only()
     @commands.command(help="Can you react in time?")
     async def thumbs(self, ctx):
@@ -271,7 +272,6 @@ class Fun(commands.Cog):
         else:
             return
 
-    @k.lvl2()
     @commands.guild_only()
     @commands.command()
     async def ttt(self, ctx, player2: commands.MemberConverter):
