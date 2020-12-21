@@ -27,14 +27,14 @@ class PogmasHelpCommand(commands.HelpCommand):
     def get_command_description(self, command):
         """Method to return a commands short doc/brief"""
         if not command.short_doc:  # check if it has any brief
-            return 'I have nothing on this command.'
+            return ''
         else:
             return command.short_doc
 
     def get_command_help(self, command):
         """Method to return a commands full description/doc string"""
         if not command.help:  # check if it has any brief or doc string
-            return 'I don\'t have anything on this command.'
+            return ''
         else:
             return command.help
 
@@ -51,9 +51,14 @@ class PogmasHelpCommand(commands.HelpCommand):
         page = 0
         cogs = list(bot.cogs)
         true_cogs = list(bot.cogs)  # get all of your cogs
-        cogs_to_hide = ['Admin', 'CommandErrorHandler', 'TD']
+        cogs_to_hide = ['Admin', 'CommandErrorHandler']
         for item in cogs_to_hide:
-            cogs.remove(item)
+            try:
+                cogs.remove(item)
+            except Exception as e:
+                pass
+        if self.bot.user.id != 740568208351690803:
+            cogs.remove('TD')
         cogs.remove('Jishaku')
         cogs.sort()
 
@@ -139,7 +144,7 @@ class PogmasHelpCommand(commands.HelpCommand):
     async def bot_help_paginator(self, page: int, cogs):
         ctx = self.context
         bot = ctx.bot
-        all_commands = [command for command in await self.filter_commands(bot.commands)]  # filter the commands the user can use
+        all_commands = [command for command in bot.commands]  # filter the commands the user can use
         cog = bot.get_cog(cogs[page])  # get the current cog
 
         embed = discord.Embed(title=f'Help with {cog.qualified_name}',
