@@ -10,6 +10,13 @@ handler = logging.FileHandler(filename='discord.log', encoding='utf-8', mode='w'
 handler.setFormatter(logging.Formatter('%(asctime)s:%(levelname)s:%(name)s: %(message)s'))
 logger.addHandler(handler)
 
+def load_ids():
+    bot.no_cut = []
+    with open('no_cut.txt') as file:
+        for line in file:
+            line = line.rstrip('\n')
+            bot.no_cut.append(int(line))
+
 # Just before starting
 
 print('------')
@@ -33,6 +40,7 @@ if __name__ == '__main__':
         bot.load_extension(extension)
 bot.load_extension('jishaku')
 
+load_ids()
 cmd = bot.get_command('jishaku py')
 cmd.aliases.append('eval')
 # register the modified command

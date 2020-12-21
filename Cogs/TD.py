@@ -3,7 +3,7 @@ from discord.ext import commands, tasks
 import asyncio
 import datetime
 
-class TD(commands.Cog, command_attrs=dict(hidden=True)):
+class TD(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.auto_brexit.start()
@@ -16,17 +16,28 @@ class TD(commands.Cog, command_attrs=dict(hidden=True)):
         emoji = '\N{THUMBS UP SIGN}'
         emoji1 = '\N{THUMBS DOWN SIGN}'
         emoji2 = 'a:siren:789554809006325760'
-        role = message.guild.get_role(703230475472207924)
+        role1 = message.guild.get_role(703230475472207924)
         if channel == int(message.channel.id):
             await message.add_reaction(emoji)
             await asyncio.sleep(1)
             await message.add_reaction(emoji1)
-        if role.mention in message.content.lower():
+        if role1.mention in message.content.lower():
             await message.channel.send("<a:siren:789554809006325760> **Staff on duty have been notified, please stand by.** <a:siren:789554809006325760>")
             await message.add_reaction(emoji2)
             await role.edit(mentionable=False, reason="Staff on duty role mentioned.")
             await asyncio.sleep(120)
             await role.edit(mentionable=True, reason="Cooldown reached - Role can be mentioned again.")
+
+    @commands.Cog.listener()
+    async def on_message(self, message):
+        role = discord.Role
+        role2 = message.guild.get_role(790631558976503830)
+        if 653685492100890635 == message.channel.id and ("#QoTD") in message.content:
+            if any(
+            role.id in [665930105909936139, 407585313129758720, 521372852952498179] #Questioner, Sever manager, Owner
+            for role in message.author.roles
+            ):
+                await message.channel.send(role2.mention)
 
     @tasks.loop(hours=24)
     async def auto_brexit(self):
@@ -63,6 +74,23 @@ class TD(commands.Cog, command_attrs=dict(hidden=True)):
     @quest_pick.before_loop
     async def before_pick(self):
         await self.bot.wait_until_ready()
+
+    @commands.command(aliases=["oo"], help="Would you like to not have your cut liked?", description="Your reason should be short and sweet.")
+    async def opt_out(self, ctx, *, reason):
+        def check(reaction, user):
+            return reaction.emoji == '👍' and user == ctx.author
+        msg = await ctx.send("Are you sure you want to opt out of having your cut liked? This is a **one time** process and mesub will be annoyed if he has to remove you from this list.")
+        await msg.add_reaction('👍')
+        await msg.add_reaction('👎')
+        try:
+            await self.bot.wait_for('reaction_add', check=check, timeout=20.0)
+        except asyncio.TimeoutError:
+            await ctx.send("I don't have all day so I assumed you said no.")
+            return
+        await ctx.send("Ok, I've sent your ID and reason to mesub, he will have a look at it and approve it if needed.")
+        channel = self.bot.get_channel(790618543904915486)
+        await channel.send(f"__**New request from: {str(ctx.author)}**__\nThe reason is:\n`{reason}`\nTheir ID is:")
+        await channel.send(f"{ctx.author.id}")
 
 def setup(bot):
     bot.add_cog(TD(bot))
