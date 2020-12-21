@@ -57,7 +57,7 @@ class PogmasHelpCommand(commands.HelpCommand):
                 cogs.remove(item)
             except Exception as e:
                 pass
-        if self.bot.user.id != 740568208351690803:
+        if bot.user.id != 740568208351690803:
             cogs.remove('TD')
         cogs.remove('Jishaku')
         cogs.sort()
