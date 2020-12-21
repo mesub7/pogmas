@@ -70,13 +70,26 @@ class Fun(commands.Cog):
             else:
                 await ctx.send(f"This time, I would say that {member.name} is {pog_level}% pog.")
 
+    @commands.check(k.lvl5)
+    @commands.command(hidden=True)
+    async def add(self, ctx, *ids:int):
+        await ctx.channel.trigger_typing()
+        with open('no_cut.txt', 'a+') as file:
+            for id in ids:
+                file.write(f'\n{id}')
+                self.bot.no_cut.append(id)
+            file.close()
+        await ctx.send(f"Users were added!")
 
     @commands.cooldown(1,240,BucketType.member)
     @commands.max_concurrency(3, per=BucketType.guild, wait=False)
     @commands.max_concurrency(1, per=BucketType.member, wait=False)
     @commands.command(description="Likes somebody's cut.", help="I like ya cut g!")
     async def cut(self, ctx, member:discord.Member=None):
-        if member is None and ctx.author.id == self.bot.owner_id:
+        if member.id in self.bot.no_cut:
+            await ctx.send("This user has opted out of having their cut liked.")
+            return
+        elif member is None and ctx.author.id == self.bot.owner_id:
             await ctx.send("Why would you like your own cut mesub?")
             return
         elif member is None:
@@ -91,9 +104,6 @@ class Fun(commands.Cog):
             return
         elif member.id == self.bot.owner_id:
             await ctx.send("Command exucution failed: mesub's cut cannot be liked.")
-            return
-        elif member.id == 242730576195354624:
-            await ctx.send("I refuse to like Auttaja's cut.")
             return
         else:
             await ctx.send("Cut liked 👌.")
@@ -110,8 +120,8 @@ class Fun(commands.Cog):
             else:
                 await ctx.send(f"{ctx.author.mention}, I can't like their cut for reasons beyond my control.")
                 return
-        await channel.send(f"<@{member.id}> New message from {ctx.author}:")
-        await channel.send("https://tenor.com/view/cut-cut-g-ilike-ya-cut-g-meme-callmecarson-gif-18368253")
+        await channel.send(f"<@{member.id}> <a:slap:790598778699776090> !")
+        await channel.send(f"You were slapped by {ctx.author}")
 
     @commands.command(help="How many days until Christmas?!?!")
     async def days(self, ctx):
@@ -167,18 +177,33 @@ class Fun(commands.Cog):
     @commands.guild_only()
     @commands.command(help="Can you react in time?")
     async def thumbs(self, ctx):
+        score = 0
+        good_terms = True
+        bank = ['️️💄','✝','😄','😉','🥛','🍼','😘','🤗','🤔','😍','😡','😱','🦷','👀','🍗','🍫','🍓','🍍','🍎','🚍','🚌']
+        names = ["Cocker", "m8", "fam", "mandem", "bro", "g", "guy"]
         await ctx.message.delete()
-        msg = await ctx.send('Send me that :thumbsup: reaction, Cocker')
+        emoji = choice(bank)
+        name = choice(names)
         def check(reaction, user):
-            return user == ctx.author and str(reaction.emoji) == '\U0001f44d'
-        try:
-            reaction, user = await self.bot.wait_for('reaction_add', timeout=randint(1,15), check=check)
-        except asyncio.TimeoutError:
-            await msg.delete()
-            await ctx.send('Fail! :thumbsdown:')
-        else:
-            await msg.delete()
-            await ctx.send(f"Congrats "+str(ctx.author.mention)+" You Did It! :thumbsup:")
+            return user == ctx.author and str(reaction.emoji) == emoji
+        while good_terms:
+            if score == 0:
+                msg = await ctx.send(f'Send me that {emoji} reaction, Cocker.')
+            else:
+                emoji = choice(bank)
+                name = choice(names)
+                msg = await ctx.send(f'Send me that {emoji} reaction, {name}')
+            try:
+                reaction, user = await self.bot.wait_for('reaction_add', timeout=randint(8,20), check=check)
+            except asyncio.TimeoutError:
+                await msg.delete()
+                await ctx.send('Slow! :snail:')
+                await ctx.send(f"Game over! Your score was `{score}`")
+                good_terms = False
+                return
+            else:
+                await ctx.send(f"Good job {ctx.author.name} :thumbsup:")
+                score = score + 1
 # Tic tac toe stuff
     global emoji_dict
     emoji_dict = {
