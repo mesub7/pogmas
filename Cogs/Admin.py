@@ -60,17 +60,12 @@ class Admin(commands.Cog, command_attrs=dict(hidden=True)):
               await asyncio.sleep(6)
           await channel.send(words, files=file)
 
-
-
-
      @commands.command()
      @commands.check(k.lvl4)
      async def dm(self, ctx, member:discord.Member, *, words):
          user = member
          await user.send(words)
          await ctx.message.delete()
-
-
 
      @commands.command(name='load', description="Command which Loads a Module.\
      Remember to use dot path. e.g: Cogs.Admin")
@@ -97,18 +92,18 @@ class Admin(commands.Cog, command_attrs=dict(hidden=True)):
      @commands.command(name='reload', aliases=["hotload", "hl"], description="Command which Reloads a Module.\
      Remember to use dot path. e.g: Cogs.Admin")
      @commands.check(k.lvl5)
-     async def acog_reload(self, ctx, cog: str):
-         if cog == 'all':
+     async def acog_reload(self, ctx, *cogs: str):
+         if ('all') in cogs:
              for extension in self.bot.initial_extensions:
                  self.bot.reload_extension(extension)
              await ctx.send('All cogs have been reloaded! 🔥')
          else:
              try:
-                 self.bot.reload_extension(cog)
-                 await ctx.send(f'`{cog}` has been hot-loaded! 🔥')
+                 for cog in cogs:
+                     self.bot.reload_extension(cog)
+                     await ctx.send(f'`{cog}` has been hot-loaded! 🔥')
              except Exception as e:
                  await ctx.send(f'**`An error occured:`** ```py\n{type(e).__name__} - {e}\n```')
-
 
      @commands.check(k.lvl5)
      @commands.command(name="status", aliases=["online"])
