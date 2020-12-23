@@ -144,7 +144,7 @@ class PogmasHelpCommand(commands.HelpCommand):
     async def bot_help_paginator(self, page: int, cogs):
         ctx = self.context
         bot = ctx.bot
-        all_commands = [command for command in bot.commands]  # filter the commands the user can use
+        all_commands = [command for command in await self.filter_commands(bot.commands)]  # filter the commands the user can use
         cog = bot.get_cog(cogs[page])  # get the current cog
 
         embed = discord.Embed(title=f'Help with {cog.qualified_name}',
