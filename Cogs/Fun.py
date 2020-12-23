@@ -78,23 +78,41 @@ class Fun(commands.Cog):
             for id in ids:
                 file.write(f'\n{id}')
                 self.bot.no_cut.append(id)
+                x = self.bot.get_user(id)
+                try:
+                    await x.send(f"**Your case has been updated:**\nOperator {ctx.author} has approved your request with reason `Valid`.\nYou will no longer have your cut liked")
+                except Exception as e:
+                    pass
             file.close()
         await ctx.send(f"Users were added!")
+
+    @commands.check(k.lvl5)
+    @commands.command(hidden=True)
+    async def deny(self, ctx, ids: commands.Greedy[discord.Member], *, reason='None'):
+        for id in ids:
+            try:
+                await id.send(f"**Your case has been updated:**\nOperator {ctx.author} has denied your request with reason `{reason}`.\nYou may submit another request in 24 hours time.")
+            except Exception as e:
+                pass
+        await ctx.send("Users denied!")
 
     @commands.cooldown(1,240,BucketType.member)
     @commands.max_concurrency(3, per=BucketType.guild, wait=False)
     @commands.max_concurrency(1, per=BucketType.member, wait=False)
     @commands.command(description="Likes somebody's cut.", help="I like ya cut g!")
     async def cut(self, ctx, member:discord.Member=None):
-        if member.id in self.bot.no_cut:
+        if member is None:
+            member = ctx.author
+            await ctx.send("Why would you like your own cut silly.")
+            return
+        elif member.id in self.bot.no_cut:
             await ctx.send("This user has opted out of having their cut liked.")
+            return
+        elif ctx.author.id in self.bot.no_cut:
+            await ctx.send("Remember that you agreed you won't like people's cuts so they don't like yours...")
             return
         elif member is None and ctx.author.id == self.bot.owner_id:
             await ctx.send("Why would you like your own cut mesub?")
-            return
-        elif member is None:
-            member = ctx.author
-            await ctx.send("Why would you like your own cut silly.")
             return
         elif member.bot:
             await ctx.send("As part of the Discord Bot Framework Agreement 2017, I cannot like another bot's cut.")
