@@ -12,6 +12,8 @@ class TD(commands.Cog):
 
     @commands.Cog.listener()
     async def on_message(self, message):
+        if message.guild is None:
+            return
         if message.guild.id == 322061619570016256:
             channel = 703665588244971582
             emoji = '\N{THUMBS UP SIGN}'
@@ -23,6 +25,8 @@ class TD(commands.Cog):
 
     @commands.Cog.listener('on_message')
     async def SoD(self, message):
+        if message.guild is None:
+            return
         if message.guild.id == 322061619570016256:
             emoji2 = 'a:siren:789554809006325760'
             role1 = message.guild.get_role(703230475472207924)
@@ -35,6 +39,8 @@ class TD(commands.Cog):
 
     @commands.Cog.listener('on_message')
     async def QoTD(self, message):
+        if message.guild is None:
+            return
         if message.guild.id == 322061619570016256:
             role = discord.Role
             role2 = message.guild.get_role(790631558976503830)
