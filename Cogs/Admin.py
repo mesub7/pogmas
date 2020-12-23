@@ -44,27 +44,29 @@ class Admin(commands.Cog, command_attrs=dict(hidden=True)):
 
      @commands.command()
      @commands.check(k.lvl4)
-     async def say(self, ctx, channel:discord.TextChannel, *, words:str):
+     async def say(self, ctx, channel:discord.TextChannel, *, words:str=None):
           file=[await attachment.to_file() for attachment in ctx.message.attachments]
           await ctx.message.delete()
           await channel.trigger_typing()
-          if len(words) < 5:
-              await asyncio.sleep(1)
-          elif len(words) < 10:
-              await asyncio.sleep(2)
-          elif len(words) < 24:
-              await asyncio.sleep(4)
-          elif len(words) < 24:
-              await asyncio.sleep(5)
-          else:
-              await asyncio.sleep(6)
+          if words is not None:
+              if len(words) < 5:
+                  await asyncio.sleep(1)
+              elif len(words) < 10:
+                  await asyncio.sleep(2)
+              elif len(words) < 24:
+                  await asyncio.sleep(4)
+              elif len(words) < 30:
+                  await asyncio.sleep(5)
+              else:
+                  await asyncio.sleep(6)
           await channel.send(words, files=file)
 
      @commands.command()
      @commands.check(k.lvl4)
-     async def dm(self, ctx, member:discord.Member, *, words):
+     async def dm(self, ctx, member:discord.Member, *, words=None):
          user = member
-         await user.send(words)
+         file=[await attachment.to_file() for attachment in ctx.message.attachments]
+         await user.send(words, files=file)
          await ctx.message.delete()
 
      @commands.command(name='load', description="Command which Loads a Module.\
@@ -95,7 +97,10 @@ class Admin(commands.Cog, command_attrs=dict(hidden=True)):
      async def acog_reload(self, ctx, *cogs: str):
          if ('all') in cogs:
              for extension in self.bot.initial_extensions:
-                 self.bot.reload_extension(extension)
+                 try:
+                    self.bot.reload_extension(extension)
+                 except Exception as e:
+                    await ctx.send(f'**`An error occured with reloading cog {extension}:`** ```py\n{type(e).__name__} - {e}\n```')
              await ctx.send('All cogs have been reloaded! 🔥')
          else:
              try:
