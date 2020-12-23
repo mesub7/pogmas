@@ -55,5 +55,8 @@ async def on_ready():
     print('User ID is:' + ' ' + str (bot.user.id))
     print('------')
 
+@bot.check
+async def no_dms(ctx):
+    return ctx.guild is not None
 
 bot.run(token)
