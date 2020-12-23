@@ -129,7 +129,7 @@ class CommandErrorHandler(commands.Cog, command_attrs=dict(hidden=True)):
     @commands.check(k.lvl5)
     @commands.command(name='ee')
     async def force_error(self, ctx):
-        await ee() #it won't work
+        await self.ee() #it won't work
 
 def setup(bot):
     bot.add_cog(CommandErrorHandler(bot))
