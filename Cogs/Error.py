@@ -1,11 +1,12 @@
 import discord
 from discord.ext import commands
 import traceback
+import asyncio
 import sys
 import Cogs.Checks as k
 
 
-class CommandErrorHandler(commands.Cog):
+class CommandErrorHandler(commands.Cog, command_attrs=dict(hidden=True)):
 
     def __init__(self, bot):
         self.bot = bot
@@ -23,12 +24,16 @@ class CommandErrorHandler(commands.Cog):
 
         # This allows us to call the default error handler at any time
         async def ee():
+            try:
+                cog_name = ctx.cog.qualified_name
+            except Exception as e:
+                cog_name = "None"
             print(f'Ignoring exception in command {ctx.command}:', file=sys.stderr)
             traceback.print_exception(type(error), error, error.__traceback__, file=sys.stderr)
             py_error = traceback.format_exception(type(error), error, error.__traceback__)
             py_error = ''.join(py_error)
             channel = self.bot.get_channel(767416350552490025)
-            await channel.send(f'An error occured with command `{ctx.command}` in cog `{ctx.cog.qualified_name}`.\
+            await channel.send(f'An error occured with command `{ctx.command}` in cog `{cog_name}`.\
             \n The command was invoked in <#{ctx.channel.id}> by `{ctx.author}`.\nThe server this was invoked in was `{ctx.guild}`. \nJumplink to command execution: {ctx.message.jump_url} . \nException:')
             await channel.send(f'```py\n{py_error}```')
             embed = discord.Embed(title="⚠ An error occurred ⚠", colour=discord.Colour.red(), description="An unexpected error has occured, this should never happen. I have sent details to mesub#0556.")
@@ -103,6 +108,9 @@ class CommandErrorHandler(commands.Cog):
 
         elif isinstance(error, discord.NotFound):
             await ctx.send("Command execution failed: I can't seem to find that. Ensure the ID is correct and try again.")
+
+        elif isinstance(error, asyncio.TimeoutError):
+            await ctx.message.add_reaction('⌛')
         else:
             # All other Errors not returned come here. And we can just print the default TraceBack.
             await ee()
@@ -119,9 +127,9 @@ class CommandErrorHandler(commands.Cog):
         await channel.send(f'```py\n{py_error}```')
 
     @commands.check(k.lvl5)
-    @commands.command(hidden=True, name='ee')
+    @commands.command(name='ee')
     async def force_error(self, ctx):
-        await ee() #it won't work
+        await self.ee() #it won't work
 
 def setup(bot):
     bot.add_cog(CommandErrorHandler(bot))

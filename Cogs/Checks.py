@@ -9,14 +9,12 @@ Level 4 - Upper Staff
 Level 5 - Bot Dev & Trusted User
 """
 
-def lvl2():
-    def predicate(ctx):
+async def lvl2(ctx):
         role = discord.Role
         return any(
         role.id in [660926272750223361, 754287737439387679, 407585313129758720, 521372852952498179, 481034890792534018] #Transport Booster, YT member, Owner, Server Manager, staff respectivly
         for role in ctx.author.roles
-        ) or ctx.author.id in (414530505585721357, 197100324727685121) #Me or Trusted user
-    return commands.check(predicate)
+        ) or await lvl5(ctx) #TD Premium, Me or Trusted user
 
 async def lvl3(ctx):
     role = discord.Role
