@@ -70,7 +70,7 @@ class Admin(commands.Cog, command_attrs=dict(hidden=True)):
          await ctx.message.delete()
 
      @commands.command(name='load', description="Command which Loads a Module.\
-     Remember to use dot path. e.g: Cogs.Admin")
+     \nRemember to use dot path. e.g: Cogs.Admin")
      @commands.is_owner()
      async def acog_load(self, ctx, *, cog: str):
          try:
@@ -81,7 +81,7 @@ class Admin(commands.Cog, command_attrs=dict(hidden=True)):
              await ctx.send(f'`{cog}` has been loaded!')
 
      @commands.command(name='unload', description="Command which Unloads a Module.\
-     Remember to use dot path. e.g: Cogs.Admin")
+     \nRemember to use dot path. e.g: Cogs.Admin")
      @commands.is_owner()
      async def acog_unload(self, ctx, *, cog: str):
          try:
@@ -92,7 +92,7 @@ class Admin(commands.Cog, command_attrs=dict(hidden=True)):
              await ctx.send(f'`{cog}` has been unloaded!')
 
      @commands.command(name='reload', aliases=["hotload", "hl"], description="Command which Reloads a Module.\
-     Remember to use dot path. e.g: Cogs.Admin")
+     \nRemember to use dot path. e.g: Cogs.Admin")
      @commands.check(k.lvl5)
      async def acog_reload(self, ctx, *cogs: str):
          if ('all') in cogs:
@@ -105,8 +105,8 @@ class Admin(commands.Cog, command_attrs=dict(hidden=True)):
          else:
              try:
                  for cog in cogs:
-                     self.bot.reload_extension(cog)
-                     await ctx.send(f'`{cog}` has been hot-loaded! 🔥')
+                     self.bot.reload_extension(f'Cogs.{cog}')
+                     await ctx.send(f'`Cogs.{cog}` has been hot-loaded! 🔥')
              except Exception as e:
                  await ctx.send(f'**`An error occured:`** ```py\n{type(e).__name__} - {e}\n```')
 
