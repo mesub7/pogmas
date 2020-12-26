@@ -25,11 +25,14 @@ class PogmasHelpCommand(commands.HelpCommand):
             return f'Aliases - [{" | ".join([alias for alias in command.aliases])}]'
 
     def get_command_description(self, command):
-        """Method to return a commands short doc/brief"""
-        if not command.short_doc:  # check if it has any brief
-            return ''
+        """Method to return a commands description"""
+        if not command.description:  # check if it has any brief
+            if command.help:
+                return command.help
+            else:
+                return ''
         else:
-            return command.short_doc
+            return command.description
 
     def get_command_help(self, command):
         """Method to return a commands full description/doc string"""
@@ -41,7 +44,7 @@ class PogmasHelpCommand(commands.HelpCommand):
     async def send_command_help(self, command):
         ctx = self.context
         bot = ctx.bot
-        embed = discord.Embed(title=f'{command}', description=f'```\n{self.get_command_signature(command)}\n{self.get_command_aliases(command)}\n\n{self.get_command_description(command)}\n```',
+        embed = discord.Embed(title=f'{command}', description=f'```\nUsage: {self.get_command_signature(command)}\n{self.get_command_aliases(command)}\n\n{self.get_command_description(command)}\n```',
                               color=discord.Colour.blue())
         await ctx.send(embed=embed)
 
@@ -59,7 +62,6 @@ class PogmasHelpCommand(commands.HelpCommand):
                 pass
         if bot.user.id != 740568208351690803:
             cogs.remove('TD')
-        cogs.remove('Jishaku')
         cogs.sort()
 
         def check(reaction, user):  # check who is reacting to the message
