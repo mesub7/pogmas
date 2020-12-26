@@ -46,8 +46,11 @@ class Fun(commands.Cog):
         if limit is None:
             await ctx.send("I need a number!")
         else:
-            result = randint(1, int(limit))
-            await ctx.send("The result is: %s!" % result)
+            try:
+                result = randint(1, int(limit))
+                await ctx.send("The result is: %s!" % result)
+            except Exception as e:
+                await ctx.send("Invalid number! It needs to be a **whole** positive number.")
 
     @commands.cooldown(3,60,BucketType.member)
     @commands.command(description="Checks how pog somebody is!", help="Checks how pog somebody is!")
@@ -197,9 +200,12 @@ class Fun(commands.Cog):
     async def thumbs(self, ctx):
         score = 0
         good_terms = True
-        bank = ['️️💄','✝','😄','😉','🥛','🍼','😘','🤗','🤔','😍','😡','😱','🦷','👀','🍗','🍫','🍓','🍍','🍎','🚍','🚌']
+        bank = ['🚒','😄','😉','🥛','🍼','😘','🤗','🤔','😍','😡','😱','🦷','👀','🦈','🍫','🍓','🍍','🍎','🚍','🚌', '😎']
         names = ["Cocker", "m8", "fam", "mandem", "bro", "g", "guy"]
-        await ctx.message.delete()
+        try:
+            await ctx.message.delete()
+        except Exception as e:
+            pass
         emoji = choice(bank)
         name = choice(names)
         def check(reaction, user):
@@ -221,7 +227,12 @@ class Fun(commands.Cog):
                 return
             else:
                 await ctx.send(f"Good job {ctx.author.name} :thumbsup:")
+                bank.remove(emoji)
                 score = score + 1
+            if not bank:
+                await ctx.send(f"You've beat the game, {ctx.author.name}! Good work.\nYour score is {score}.")
+                good_terms = False
+                return
 # Tic tac toe stuff
     global emoji_dict
     emoji_dict = {
