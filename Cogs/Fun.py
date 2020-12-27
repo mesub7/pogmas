@@ -57,6 +57,8 @@ class Fun(commands.Cog):
     async def pog(self, ctx, member:discord.Member=None):
         pog_level = randint(1, 100)
         if pog_level == 100:
+            if member is None:
+                member = ctx.author
             await ctx.send(f"Well this time, I think that {member.name} is off the scale!")
         else:
             if member is None and ctx.author.id == self.bot.owner_id:
