@@ -6,7 +6,6 @@ import datetime
 class TD(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        self.auto_brexit.start()
         self.quest_enq.start()
         self.quest_pick.start()
 
