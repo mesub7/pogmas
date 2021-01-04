@@ -14,7 +14,7 @@ You can run Pogmas if you _really_ wanted to. Quite a bit of it is hardcoded tho
 
 A pm2 file is included to keep the bot online.
 
-##Contributing
+## Contributing
 
 All contributions are welcome.
 
@@ -22,7 +22,7 @@ All contributions are welcome.
 2) Add your code.
 3) Submit a PR
 
-###Support
+### Support
 
 Join the server here: discord.gg/Ems9pAv
 
