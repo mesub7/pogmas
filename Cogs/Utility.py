@@ -6,9 +6,10 @@ import Cogs.Checks as k
 import asyncio
 
 class Utility(commands.Cog):
+    """The Utility cog. Provides helpful information and functions."""
+    
     def __init__(self, bot):
         self.bot = bot
-        self.bot.launch_time = datetime.utcnow()
 
     @commands.command(desription="Pings the bot.", help="Pings the bot.")
     async def ping(self, ctx):
@@ -16,7 +17,7 @@ class Utility(commands.Cog):
         message = await ctx.send("Ping...")
         end = time.perf_counter()
         duration = (end - start) * 1000
-        await message.edit(content='Pong! {:.2f}ms'.format(duration))
+        await message.edit(content='Pong!\nCommand processing: `{:.2f}ms`\nDiscord latency: `{:.2f}ms`'.format(duration, self.bot.latency*1000))
 
     @commands.command(description='Some info about the bot.', help="Some infomation about the bot.")
     async def about(self, ctx):
