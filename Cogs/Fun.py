@@ -34,12 +34,13 @@ import asyncio
 
 
 class Fun(commands.Cog):
+    """The Fun cog. Contains all sorts of games and enetertaining functions."""
+
     def __init__(self, bot):
          self.bot = bot
          level_3 = k.lvl3
          level_2 = k.lvl2
     global bot_owner_id
-
 
     @commands.command(description="Produces a random number from 1!", help="Produces a random number from 1!")
     async def random(self, ctx, limit=None):
@@ -75,8 +76,59 @@ class Fun(commands.Cog):
             else:
                 await ctx.send(f"This time, I would say that {member.name} is {pog_level}% pog.")
 
+    @commands.cooldown(3,60,BucketType.member)
+    @commands.command(description="Checks how UWU somebody is.")
+    async def uwu(self, ctx, member:discord.Member=None):
+        uwu_level = randint(1, 100)
+        if 0 <= uwu_level <= 25:
+            uwu = 'owo'
+        elif 26 <= uwu_level <= 50:
+            uwu = 'OWO'
+        elif 51 <= uwu_level <= 75:
+            uwu = 'uwu'
+        else:
+            uwu = 'UWU'
+        if uwu_level == 100:
+            if member is None:
+                member = ctx.author
+            await ctx.send(f"Well this time, I think that {member.name} is uWu! (100%)")
+        else:
+            if member is None and ctx.author.id == self.bot.owner_id:
+                await ctx.send("You are the top uWu (As always 😉)")
+            elif member is None:
+                member = ctx.author
+                await ctx.send(f"This time, I would say that you are {uwu} ({uwu_level}%).")
+            elif member.id == self.bot.user.id:
+                await ctx.send("I do not participate in this.")
+            elif member.id == self.bot.owner_id:
+                await ctx.send("mesub is uWu.(As always 😉)")
+            elif member.id == 242730576195354624:
+                await ctx.send("Auttaja does not participate in this.")
+            else:
+                await ctx.send(f"This time, I would say that {member.name} is {uwu} ({uwu_level}%).")
+
+    @commands.group(description="Ask Pogmas and get a response!")
+    async def ask(self, ctx):
+        if ctx.invoked_subcommand is None:
+            await ctx.send("Command execution failed: Argument is missing! Correct usage:")
+            await ctx.send_help(ctx.command)
+
+    @ask.command(description="No nonsense. Get a yes, no or maybe answer.")
+    async def basic(self, ctx, *, question):
+        ''.join(c for c in question if c not in ('?', '.', '!'))
+        responses = ['y', 'n', 'm']
+        pick = choice(responses)
+        await ctx.channel.trigger_typing()
+        await asyncio.sleep(3)
+        if pick == 'y':
+            await ctx.send(f"Yes you should definitely {question}.")
+        elif pick == 'n':
+            await ctx.send(f"No you should not {question}.")
+        else:
+            await ctx.send(f"Hmmm, maybe you should {question}... Maybe not...")
+
     @commands.check(k.lvl5)
-    @commands.command(hidden=True)
+    @commands.command(description="Approves people to be added to the no cut list.")
     async def add(self, ctx, *ids:int):
         await ctx.channel.trigger_typing()
         with open('no_cut.txt', 'a+') as file:
@@ -92,7 +144,7 @@ class Fun(commands.Cog):
         await ctx.send(f"Users were added!")
 
     @commands.check(k.lvl5)
-    @commands.command(hidden=True)
+    @commands.command(description="Rejects somebody to be added tt the no cut list.")
     async def deny(self, ctx, ids: commands.Greedy[discord.Member], *, reason='None'):
         for id in ids:
             try:
@@ -152,13 +204,6 @@ class Fun(commands.Cog):
         now = dt.now()
         cd=dt(year=now.year, month=12,day=25) - dt(year=now.year, month=now.month, day=now.day)
         await ctx.send(f'There are `'+str(cd)[:str(cd).find(",")]+'` until Christmas. 🎄')
-
-    @commands.command(help="How many days until Brexit?!?!")
-    async def brexit(self, ctx):
-        dt  = datetime.datetime
-        now = dt.now()
-        cd=dt(year=2021, month=1,day=1) - dt(year=now.year, month=now.month, day=now.day)
-        await ctx.send(f'There are `'+str(cd)[:str(cd).find(",")]+'` until <:BR:772541846357278791><:EX:772541846358196254><:IT:756911540728496220>')
 
     @commands.check(k.lvl2)
     @commands.command(help="Can you avoid the ghosts?", name="ghost", aliases=['gg'])
