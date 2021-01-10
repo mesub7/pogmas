@@ -6,39 +6,50 @@ import Cogs.Checks as k
 
 
 class Admin(commands.Cog):
+    """The administrative cog. Most commands related to
+    the operation and management of the bot are found here.
+    """
+
     def __init__(self, bot):
         self.bot = bot
         level_4 = k.lvl4
 
     @commands.is_owner()
-    @commands.command()
+    @commands.command(description="Add a command alias.")
     async def swap(self, ctx, cmdname, alias):
-        cmd = ctx.bot.get_command(cmdname)
+        cmd = self.bot.get_command(cmdname)
         cmd.aliases.append(alias)
         # register the modified command
-        ctx.bot.remove_command(cmdname)
-        ctx.bot.add_command(cmd)
+        self.bot.remove_command(cmdname)
+        self.bot.add_command(cmd)
         await ctx.send('Done!')
 
     @commands.check(k.lvl5)
-    @commands.command()
+    @commands.command(description="Restarts the bot.")
     async def restart(self, ctx):
         await ctx.send("Ok! I'll restart now...")
         await self.bot.close()
 
     @commands.check(k.lvl5)
-    @commands.command(name='disable')
+    @commands.command(name='disable', description="Disables a command.")
     async def _disable(self, ctx, command:str):
         c = self.bot.get_command(command)
-        c.enabled = False
-        await ctx.send(f"Command '{command}' disabled.")
+        try:
+            c.enabled = False
+            await ctx.send(f"Command '{command}' disabled.")
+        except Exception as e:
+            await ctx.send("Command execution failed: Command not found.")
+
 
     @commands.check(k.lvl5)
-    @commands.command(name='enable')
+    @commands.command(name='enable', description="Enables a command.")
     async def _enable(self, ctx, command:str):
         c = self.bot.get_command(command)
-        c.enabled = True
-        await ctx.send(f"Command '{command}' enabled.")
+        try:
+            c.enabled = True
+            await ctx.send(f"Command '{command}' enabled.")
+        except Exception as e:
+            await ctx.send("Command execution failed: Command not found.")
 
     @commands.check(k.lvl4)
     @commands.command()
@@ -68,8 +79,7 @@ class Admin(commands.Cog):
         await ctx.message.delete()
 
     @commands.is_owner()
-    @commands.command(name='load', description="Command which Loads a Module.\
-    \nRemember to use dot path. e.g: Cogs.Admin")
+    @commands.command(name='load', description="Command which Loads a Module.")
     async def acog_load(self, ctx, *cogs: str):
         for cog in cogs:
             try:
@@ -80,8 +90,7 @@ class Admin(commands.Cog):
                 await ctx.send(f'`{cog}` has been loaded!')
 
     @commands.is_owner()
-    @commands.command(name='unload', description="Command which Unloads a Module.\
-    \nRemember to use dot path. e.g: Cogs.Admin")
+    @commands.command(name='unload', description="Command which Unloads a Module.")
     async def acog_unload(self, ctx, *cogs: str):
         for cog in cogs:
             try:
@@ -92,8 +101,7 @@ class Admin(commands.Cog):
                 await ctx.send(f'`{cog}` has been unloaded!')
 
     @commands.check(k.lvl5)
-    @commands.command(name='reload', aliases=["hotload", "hl"], description="Command which Reloads a Module.\
-    \nRemember to use dot path. e.g: Cogs.Admin")
+    @commands.command(name='reload', aliases=["hotload", "hl"], description="Command which Reloads a Module.")
     async def acog_reload(self, ctx, *cogs: str):
         if ('all') in cogs:
             for extension in self.bot.initial_extensions:
@@ -111,7 +119,49 @@ class Admin(commands.Cog):
                 await ctx.send(f'**`An error occured:`** ```py\n{type(e).__name__} - {e}\n```')
 
     @commands.check(k.lvl5)
-    @commands.command(name="status", aliases=["online"])
+    @commands.group(description="The legacy group commands for manual work.")
+    async def legacy(self, ctx):
+        if ctx.invoked_subcommand is None:
+            await ctx.send("Command execution failed: Argument is missing! Correct usage:")
+            await ctx.send_help(ctx.command)
+
+    @commands.check(k.lvl5)
+    @legacy.command(name='load', description="Loads an extension outside the `Cogs` folder. Can load an extension inside it as well.\
+    \nRemember to use dot path. e.g: Cogs.Admin")
+    async def lcog_load(self, ctx, *cogs: str):
+        for cog in cogs:
+            try:
+                self.bot.load_extension(cog)
+            except Exception as e:
+                await ctx.send(f'**`An error occured with loading {cog}:`** ```py\n{type(e).__name__} - {e}\n```')
+            else:
+                await ctx.send(f'`{cog}` has been loaded!')
+
+    @commands.check(k.lvl5)
+    @legacy.command(name='unload', description='Unloads an extension outside of the `Cogs` folder. Can unload an extension inside it as well.\
+    \nRemember to use dot path. e.g: Cogs.Admin')
+    async def lcog_unload(self, ctx, *cogs: str):
+        for cog in cogs:
+            try:
+                self.bot.unload_extension(cog)
+            except Exception as e:
+                await ctx.send(f'**`An error occured with unloading cog {cog}:`** ```py\n{type(e).__name__} - {e}\n```')
+            else:
+                await ctx.send(f'`{cog}` has been unloaded!')
+
+    @commands.check(k.lvl5)
+    @legacy.command(name='reload', aliases=['hl', 'hotload'], description='Reloads an extenson outside of the `Cogs` folder. Can reload an extension inside it as well.\
+    \nRemember to use dot path. e.g: Cogs.Admin')
+    async def lcog_reload(self, ctx, *cogs:str):
+        try:
+            for cog in cogs:
+                self.bot.reload_extension(cog)
+                await ctx.send(f'`{cog}` has been hot-loaded! 🔥')
+        except Exception as e:
+            await ctx.send(f'**`An error occured:`** ```py\n{type(e).__name__} - {e}\n```')
+
+    @commands.check(k.lvl5)
+    @commands.command(name="status", aliases=["online"], description="Sets the bot's status.")
     async def online(self, ctx, icon:str = None, status:str = None, *, words:str = None):
         if icon is None or icon.lower() in ("g", "online"):
             if status is None:
