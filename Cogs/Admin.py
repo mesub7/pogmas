@@ -52,7 +52,7 @@ class Admin(commands.Cog):
             await ctx.send("Command execution failed: Command not found.")
 
     @commands.check(k.lvl4)
-    @commands.command()
+    @commands.command(hidden=True)
     async def say(self, ctx, channel:discord.TextChannel, *, words:str=None):
         file=[await attachment.to_file() for attachment in ctx.message.attachments]
         await ctx.message.delete()
@@ -71,7 +71,7 @@ class Admin(commands.Cog):
         await channel.send(words, files=file)
 
     @commands.check(k.lvl4)
-    @commands.command()
+    @commands.command(hidden=True)
     async def dm(self, ctx, member:discord.Member, *, words=None):
         user = member
         file=[await attachment.to_file() for attachment in ctx.message.attachments]
