@@ -4,20 +4,20 @@ from discord.ext import commands
 class PogmasHelpCommand(commands.HelpCommand):
     def __init__(self):
         super().__init__(command_attrs={
-            'help': 'Shows help about the bot, a command, or a category'  # This is the command.help string
+            'help': 'Shows help about the bot, a command, a cog or a category'  # This is the command.help string
 })
     def get_command_signature(self, command):
         """Method to return a commands name and signature"""
-        if not command.signature and not command.parent:  # checking if it has no args and isn't a subcommand
+        if not command.signature and not command.parent:  # no args and isn't a subcommand
             return f'{self.clean_prefix}{command.name}'
-        if command.signature and not command.parent:  # checking if it has args and isn't a subcommand
+        if command.signature and not command.parent:  # args and isn't a subcommand
             return f'{self.clean_prefix}{command.name} {command.signature}'
-        if not command.signature and command.parent:  # checking if it has no args and is a subcommand
+        if not command.signature and command.parent:  # no args and is a subcommand
             return f'{self.clean_prefix}{str(command.parent)}{command.name}'
-        else:  # else assume it has args a signature and is a subcommand
+        else:  # it has args a signature and is a subcommand (possibly)
             return f'{self.clean_prefix}{str(command.parent)} {command.name} {command.signature}'
 
-    def get_command_aliases(self, command):  # this is a custom written method along with all the others below this
+    def get_command_aliases(self, command):  # Gobot's method
         """Method to return a commands aliases"""
         if not command.aliases:  # check if it has any aliases
             return ''
@@ -25,11 +25,14 @@ class PogmasHelpCommand(commands.HelpCommand):
             return f'Aliases - [{" | ".join([alias for alias in command.aliases])}]'
 
     def get_command_description(self, command):
-        """Method to return a commands short doc/brief"""
-        if not command.short_doc:  # check if it has any brief
-            return ''
+        """Method to return a commands description"""
+        if not command.description:  # check if it has any brief
+            if command.help:
+                return command.help
+            else:
+                return '\u2800'
         else:
-            return command.short_doc
+            return command.description
 
     def get_command_help(self, command):
         """Method to return a commands full description/doc string"""
@@ -41,25 +44,91 @@ class PogmasHelpCommand(commands.HelpCommand):
     async def send_command_help(self, command):
         ctx = self.context
         bot = ctx.bot
-        embed = discord.Embed(title=f'{command}', description=f'```\n{self.get_command_signature(command)}\n{self.get_command_aliases(command)}\n\n{self.get_command_description(command)}\n```',
-                              color=discord.Colour.blue())
-        await ctx.send(embed=embed)
+        if await command.can_run(ctx): # Can it be run?
+            embed = discord.Embed(title=f'{command}', description=f'```\nUsage: {self.get_command_signature(command)}\n{self.get_command_aliases(command)}\n\n{self.get_command_description(command)}\n```',
+            color=discord.Colour.blue())
+            await ctx.send(embed=embed)
+        else:
+            if command.qualified_name in ('say', 'dm'):
+                await ctx.send(f"No command called \"{command}\" found.")
+            else:
+                await ctx.send("Command execution failed: You do not have the required permissions to run this command. Therefore you are not permitted to see its help.")
+
+    def add_extra(self, group):
+        if group.invoke_without_command: # Add extra stuff for groups
+            return '[subcommand] [args]'
+        else:
+            return '<subcommand> [args]'
+
+    def get_group_help(self, group):
+        if group.help:
+            return group.help
+        elif group.short_doc:
+            return group.short_doc
+        elif group.description:
+            return group.description
+        else:
+            return ''
+
+    async def send_group_help(self, group):
+        ctx = self.context
+        bot = ctx.bot
+        all_commands = [command for command in await self.filter_commands(group.walk_commands(), sort=True)] # Still checking if they can run anything
+        if not all_commands:
+            await ctx.send("Command execution failed: You do not have the required permissions to run this group command (or any of its subcommands) so there is nothing to show.")
+        else:
+            embed = discord.Embed(title=f'{group.qualified_name}', description=f'```\nUsage: {self.clean_prefix}{group.qualified_name} {self.add_extra(group)}\n\n{self.get_group_help(group)}\n```',
+            color=discord.Colour.blue())
+            for c in all_commands:
+                if not c.hidden:
+                    signature = self.get_command_signature(c)
+                    description = self.get_command_description(c)
+                    if c.parent:  # it is a sub-command
+                        embed.add_field(name=f'**╚╡**{signature}', value=description)
+            await ctx.send(embed=embed)
+
+    async def send_cog_help(self, cog):
+        ctx = self.context
+        bot = ctx.bot
+        all_commands = [command for command in await self.filter_commands(cog.walk_commands(), sort=True)] # Again. checking if they can run anything
+        if not all_commands:
+            await ctx.send("Command execution failed: You cannot run any commands in this cog so there is nothing to show.")
+        else:
+            embed = discord.Embed(title=f'Help with {cog.qualified_name}',
+            description=cog.description, color=discord.Colour.blue())
+            embed.set_thumbnail(url=ctx.bot.user.avatar_url)
+            for c in all_commands:
+                if c.hidden:
+                    pass
+                elif not c.hidden:
+                    signature = self.get_command_signature(c)
+                    description = self.get_command_description(c)
+                    if c.parent:  # it is a sub-command
+                        embed.add_field(name=f'**╚╡**{signature}', value=description)
+                    else:
+                        embed.add_field(name=signature, value=description, inline=False)
+            embed.set_footer(text=f'Use "{self.clean_prefix}help <command>" for more info on a command.')
+            await ctx.send(embed=embed)
 
     async def send_bot_help(self, mapping):
         ctx = self.context
         bot = ctx.bot
         page = 0
-        cogs = list(bot.cogs)
+        cogs = list(bot.cogs) # These cogs will be removed if they cannot run anything
         true_cogs = list(bot.cogs)  # get all of your cogs
-        cogs_to_hide = ['Admin', 'CommandErrorHandler']
-        for item in cogs_to_hide:
+        for cog in cogs:
+            coga = bot.get_cog(cog)
+            all_commands = [command for command in await self.filter_commands(coga.walk_commands(), sort=True)]
+            if not all_commands:
+                cogs.remove(cog)
+        cmd = bot.get_command('jishaku')
+        try:
+            await cmd.can_run(ctx)
+        except Exception as e:
             try:
-                cogs.remove(item)
+                cogs.remove('Jishaku')
             except Exception as e:
                 pass
-        if bot.user.id != 740568208351690803:
-            cogs.remove('TD')
-        cogs.remove('Jishaku')
         cogs.sort()
 
         def check(reaction, user):  # check who is reacting to the message
@@ -119,8 +188,8 @@ class PogmasHelpCommand(commands.HelpCommand):
                                           color=discord.Colour.blue())
                     embed.set_thumbnail(url=ctx.bot.user.avatar_url)
                     embed.add_field(
-                        name=f'There are {len(true_cogs)} cogs loaded :gear:.',
-                        value='`<...>` indicates a required argument,\n`[...]` indicates an optional argument.\n\n'
+                        name=f'There are {len(true_cogs)} cogs loaded :gear:.', #all cogs
+                        value='`<...>` indicates a required argument,\n`[...]` indicates an optional argument.\n`╚╡` indicates a subcommand.\n\n'
                               '**Don\'t type these around your argument.**')
                     embed.add_field(name='Emoji key:',
                                     value=':track_previous: Goes to the first page\n'
@@ -135,6 +204,7 @@ class PogmasHelpCommand(commands.HelpCommand):
 
                 elif str(reaction.emoji) == '⏹':  # delete the message and break from the wait_for
                     await help_embed.delete()
+                    await ctx.message.add_reaction('✅') # Command run successfully
                     break
 
     async def bot_help_paginator_reactor(self, message, reactions):
@@ -144,15 +214,16 @@ class PogmasHelpCommand(commands.HelpCommand):
     async def bot_help_paginator(self, page: int, cogs):
         ctx = self.context
         bot = ctx.bot
-        all_commands = [command for command in await self.filter_commands(bot.commands)]  # filter the commands the user can use
-        cog = bot.get_cog(cogs[page])  # get the current cog
-
+        cog = bot.get_cog(cogs[page])   # get the current cog
+        all_commands = [command for command in await self.filter_commands(cog.walk_commands(), sort=True)] # filter the commands the user can use
         embed = discord.Embed(title=f'Help with {cog.qualified_name}',
                               description=cog.description, color=discord.Colour.blue())
         embed.set_author(name=f'Page {page + 1}')
         embed.set_thumbnail(url=ctx.bot.user.avatar_url)
-        for c in cog.walk_commands():
-            if not c.hidden:
+        for c in all_commands:
+            if c.hidden:
+                pass
+            elif not c.hidden:
                 signature = self.get_command_signature(c)
                 description = self.get_command_description(c)
                 if c.parent:  # it is a sub-command

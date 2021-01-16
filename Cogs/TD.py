@@ -4,14 +4,17 @@ import asyncio
 import datetime
 
 class TD(commands.Cog):
+    """The Transport Dash Cog. Contains functions exclusive to Transport Dash"""
+
     def __init__(self, bot):
         self.bot = bot
-        self.auto_brexit.start()
         self.quest_enq.start()
         self.quest_pick.start()
 
     @commands.Cog.listener()
     async def on_message(self, message):
+        if message.guild is None:
+            return
         if message.guild.id == 322061619570016256:
             channel = 703665588244971582
             emoji = '\N{THUMBS UP SIGN}'
@@ -23,6 +26,8 @@ class TD(commands.Cog):
 
     @commands.Cog.listener('on_message')
     async def SoD(self, message):
+        if message.guild is None:
+            return
         if message.guild.id == 322061619570016256:
             emoji2 = 'a:siren:789554809006325760'
             role1 = message.guild.get_role(703230475472207924)
@@ -35,6 +40,8 @@ class TD(commands.Cog):
 
     @commands.Cog.listener('on_message')
     async def QoTD(self, message):
+        if message.guild is None:
+            return
         if message.guild.id == 322061619570016256:
             role = discord.Role
             role2 = message.guild.get_role(790631558976503830)
@@ -45,17 +52,17 @@ class TD(commands.Cog):
                 ):
                     await message.channel.send(role2.mention)
 
-    @tasks.loop(hours=24)
-    async def auto_brexit(self):
-        channel = self.bot.get_channel(395956678412992523)
-        dt  = datetime.datetime
-        now = dt.now()
-        cd=dt(year=2021, month=1,day=1) - dt(year=now.year, month=now.month, day=now.day)
-        await channel.send(f'There are `'+str(cd)[:str(cd).find(",")]+'` until <:BR:772541846357278791><:EX:772541846358196254><:IT:756911540728496220>')
+    #@tasks.loop(hours=24)
+    #async def auto_brexit(self):
+        #channel = self.bot.get_channel(395956678412992523)
+        #dt  = datetime.datetime
+        #now = dt.now()
+        #cd=dt(year=2021, month=1,day=1) - dt(year=now.year, month=now.month, day=now.day)
+        #await channel.send(f'There are `'+str(cd)[:str(cd).find(",")]+'` until <:BR:772541846357278791><:EX:772541846358196254><:IT:756911540728496220>')
 
-    @auto_brexit.before_loop
-    async def before_brexit(self):
-        await self.bot.wait_until_ready()
+    #@auto_brexit.before_loop
+    #async def before_brexit(self):
+        #await self.bot.wait_until_ready()
 
     @tasks.loop(hours=24)
     async def quest_enq(self):
