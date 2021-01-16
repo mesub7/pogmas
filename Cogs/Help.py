@@ -98,7 +98,9 @@ class PogmasHelpCommand(commands.HelpCommand):
             description=cog.description, color=discord.Colour.blue())
             embed.set_thumbnail(url=ctx.bot.user.avatar_url)
             for c in all_commands:
-                if not c.hidden:
+                if c.hidden:
+                    pass
+                elif not c.hidden:
                     signature = self.get_command_signature(c)
                     description = self.get_command_description(c)
                     if c.parent:  # it is a sub-command
@@ -219,7 +221,9 @@ class PogmasHelpCommand(commands.HelpCommand):
         embed.set_author(name=f'Page {page + 1}')
         embed.set_thumbnail(url=ctx.bot.user.avatar_url)
         for c in all_commands:
-            if not c.hidden:
+            if c.hidden:
+                pass
+            elif not c.hidden:
                 signature = self.get_command_signature(c)
                 description = self.get_command_description(c)
                 if c.parent:  # it is a sub-command
