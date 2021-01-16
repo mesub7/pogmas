@@ -31,6 +31,8 @@ from discord.ext.commands.cooldowns import BucketType
 import Cogs.Checks as k
 import datetime
 import asyncio
+import re
+import magic8ball
 
 
 class Fun(commands.Cog):
@@ -40,6 +42,7 @@ class Fun(commands.Cog):
          self.bot = bot
          level_3 = k.lvl3
          level_2 = k.lvl2
+         self.bot.banned = ['suicide', 'self-harm', 'kill', 'self harm', 'murder']
     global bot_owner_id
 
     @commands.command(description="Produces a random number from 1!", help="Produces a random number from 1!")
@@ -113,19 +116,34 @@ class Fun(commands.Cog):
             await ctx.send("Command execution failed: Argument is missing! Correct usage:")
             await ctx.send_help(ctx.command)
 
-    @ask.command(description="No nonsense. Get a yes, no or maybe answer.")
+    @ask.command(description="No nonsense. Get a yes, no or maybe answer.\
+    \nThese answers are randomly generated and are advisory only. Mesub is not responsible for anything that happens as a result of you following the bot's advice.")
     async def basic(self, ctx, *, question):
-        ''.join(c for c in question if c not in ('?', '.', '!'))
+        quest = re.sub(r'[.?!]', '', question)
         responses = ['y', 'n', 'm']
         pick = choice(responses)
         await ctx.channel.trigger_typing()
         await asyncio.sleep(3)
+        if any(x in question.lower() for x in self.bot.banned):
+            await ctx.send("Your question contains matters of a sensitive nature, I wouldn't be able to asnwer it.")
+            return
         if pick == 'y':
-            await ctx.send(f"Yes you should definitely {question}.")
+            await ctx.send(f"Yes you should definitely {quest}.")
         elif pick == 'n':
-            await ctx.send(f"No you should not {question}.")
+            await ctx.send(f"No you should not {quest}.")
         else:
-            await ctx.send(f"Hmmm, maybe you should {question}... Maybe not...")
+            await ctx.send(f"Hmmm, maybe you should {quest}... Maybe not...")
+
+    @ask.command(name="ball", description="Ask the ball?\
+    \nThese answers are randomly generated and are advisory only. Mesub is not responsible for anything that happens as a result of you following the bot's advice.")
+    async def _8ball(self, ctx, question):
+        ball = magic8ball.list
+        if any(x in question.lower() for x in self.bot.banned):
+            await ctx.send("Your question contains matters of a sensitive nature, I wouldn't be able to asnwer it.")
+            return
+        await ctx.channel.trigger_typing()
+        await asyncio.sleep(3)
+        await ctx.send(choice(ball))
 
     @commands.check(k.lvl5)
     @commands.command(description="Approves people to be added to the no cut list.")
