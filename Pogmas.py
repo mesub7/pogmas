@@ -15,7 +15,10 @@ def load_ids():
     with open('no_cut.txt') as file:
         for line in file:
             line = line.rstrip('\n')
-            bot.no_cut.append(int(line))
+            try:
+                bot.no_cut.append(int(line))
+            except Exception as e:
+                pass
 
 # Just before starting
 
