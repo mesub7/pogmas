@@ -123,7 +123,10 @@ class PogmasHelpCommand(commands.HelpCommand):
         try:
             await cmd.can_run(ctx)
         except Exception as e:
-            cogs.remove('Jishaku')
+            try:
+                cogs.remove('Jishaku')
+            except Exception as e:
+                pass
         cogs.sort()
 
         def check(reaction, user):  # check who is reacting to the message
