@@ -42,7 +42,7 @@ class Fun(commands.Cog):
          self.bot = bot
          level_3 = k.lvl3
          level_2 = k.lvl2
-         self.bot.banned = ['suicide', 'self-harm', 'kill', 'self harm', 'murder']
+         self.bot.banned = ['suicide', 'self-harm', 'kill', 'self harm', 'murder', "auttaja", "mesub", "steal", "rob", "commit", "hack", "mee6", "dyno", "rythm"]
     global bot_owner_id
 
     @commands.command(description="Produces a random number from 1!", help="Produces a random number from 1!")
@@ -223,7 +223,7 @@ class Fun(commands.Cog):
         cd=dt(year=now.year, month=12,day=25) - dt(year=now.year, month=now.month, day=now.day)
         await ctx.send(f'There are `'+str(cd)[:str(cd).find(",")]+'` until Christmas. 🎄')
 
-    @commands.check(k.lvl2)
+
     @commands.command(help="Can you avoid the ghosts?", name="ghost", aliases=['gg'])
     async def gg(self, ctx):
         feeling_brave = True
@@ -259,7 +259,7 @@ class Fun(commands.Cog):
         '<:shaunhug:774986283835326466>', '<:shaunhand:774987343353479219>', '<:shaun2:774986280073166900>', '<:shaun:699731917729300603>']
         await ctx.send(f"This time, it's {choice(list)}!")
 
-    @commands.check(k.lvl2)
+
     @commands.guild_only()
     @commands.command(help="Can you react in time?")
     async def thumbs(self, ctx):
