@@ -30,8 +30,13 @@ intents = discord.Intents.default()
 intents.members = True
 
 token = open("token.txt","r").readline()
+mentions = discord.AllowedMentions()
+mentions.everyone = False
+mentions.users = True
+mentions.roles = [discord.Object(id=790631558976503830)]
+mentions.replied_user = True
 
-bot = commands.Bot(command_prefix='p',status=discord.Status.online, actvity=discord.Activity(type=discord.ActivityType.watching, name="JoshiWoshi04's videos."), \
+bot = commands.Bot(command_prefix='p',status=discord.Status.online, allowed_mentions=mentions, actvity=discord.Activity(type=discord.ActivityType.watching, name="JoshiWoshi04's videos."), \
 intents=intents, help_command=h.PogmasHelpCommand())
 bot.launch_time = datetime.utcnow()
 bot.owner_id = 414530505585721357
