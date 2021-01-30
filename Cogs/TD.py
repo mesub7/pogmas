@@ -91,14 +91,17 @@ class TD(commands.Cog):
     @commands.command(aliases=["oo"], help="Would you like to not have your cut liked?", description="Your reason should be short and sweet.")
     async def opt_out(self, ctx, *, reason):
         def check(reaction, user):
-            return reaction.emoji == '👍' and user == ctx.author
+            return user == ctx.author
         msg = await ctx.send("Are you sure you want to opt out of having your cut liked? This is a **one time** process and mesub will be annoyed if he has to remove you from this list.\n```\nYou also agree that you will not be able to like other people's cuts.\n```")
         await msg.add_reaction('👍')
         await msg.add_reaction('👎')
         try:
-            await self.bot.wait_for('reaction_add', check=check, timeout=20.0)
+            reaction, user = await self.bot.wait_for('reaction_add', check=check, timeout=20.0)
         except asyncio.TimeoutError:
             await ctx.send("I don't have all day so I assumed you said no.")
+            return
+        if str(reaction.emoji) == '👎':
+            await ctx.send("Oh, you changed your mind? Alrighty.")
             return
         await ctx.send("Ok, I've sent your ID and reason to mesub. You will be updated in your DMs, you make sure they're on.")
         channel = self.bot.get_channel(790618543904915486)

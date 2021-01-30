@@ -42,7 +42,7 @@ class Fun(commands.Cog):
          self.bot = bot
          level_3 = k.lvl3
          level_2 = k.lvl2
-         self.bot.banned = ['suicide', 'self-harm', 'kill', 'self harm', 'murder', "auttaja", "mesub", "steal", "rob", "commit", "hack", "mee6", "dyno", "rythm"]
+         self.bot.banned = ['suicide', 'self-harm', 'kill', 'self harm', 'murder', "auttaja", "mesub", "steal", "rob", "commit", "hack", "mee6", "dyno", "rythm", "kms"]
     global bot_owner_id
 
     @commands.command(description="Produces a random number from 1!", help="Produces a random number from 1!")
@@ -76,6 +76,8 @@ class Fun(commands.Cog):
                 await ctx.send("mesub is 100% pog! (As always 😉)")
             elif member.id == 242730576195354624:
                 await ctx.send("Auttaja is beyond pog 😍😍")
+            elif member.id == 240035755458691072:
+                await ctx.send("Squid is 100% squidpog.")
             else:
                 await ctx.send(f"This time, I would say that {member.name} is {pog_level}% pog.")
 
@@ -122,9 +124,10 @@ class Fun(commands.Cog):
         quest = re.sub(r'[.?!]', '', question)
         responses = ['y', 'n', 'm']
         pick = choice(responses)
+        m = self.bot.get_user(242730576195354624) #auttaja
         await ctx.channel.trigger_typing()
         await asyncio.sleep(3)
-        if any(x in question.lower() for x in self.bot.banned):
+        if any(x in question.lower() for x in self.bot.banned) or m.mentioned_in(ctx.message):
             await ctx.send("Your question contains matters of a sensitive nature, I wouldn't be able to asnwer it.")
             return
         if pick == 'y':
@@ -213,7 +216,7 @@ class Fun(commands.Cog):
             else:
                 await ctx.send(f"{ctx.author.mention}, I can't like their cut for reasons beyond my control.")
                 return
-        await channel.send(f"<@{member.id}> <a:slap:790598778699776090> !")
+        await channel.send(f"<@{member.id}> <a:slap:790598778699776090>!")
         await channel.send(f"You were slapped by {ctx.author}")
 
     @commands.command(help="How many days until Christmas?!?!")
@@ -412,13 +415,16 @@ class Fun(commands.Cog):
 
         sure = await ctx.send(f"{player2.mention}, **{str(ctx.author)}** has challenged you to a game of **Tic-Tac-Toe.**\nDo you accept?")
         def check_x(reaction, user):
-            return reaction.emoji == '👍' and user == player2
+            return user == player2
         await sure.add_reaction('👍')
         await sure.add_reaction('👎')
         try:
-            await self.bot.wait_for('reaction_add', check=check_x, timeout=20.0)
+            reaction, user = await self.bot.wait_for('reaction_add', check=check_x, timeout=20.0)
         except asyncio.TimeoutError:
-            await ctx.send("I see you're not up for it so I cancelled it...")
+            await ctx.send("I see you took too long so I cancelled it...")
+            return
+        if str(reaction.emoji) == '👎':
+            await ctx.send("Oh? You're not up for it? All good.")
             return
 		# Creates and sends the initial grid
         message = await ctx.send("Preparing the grid, one second...")
