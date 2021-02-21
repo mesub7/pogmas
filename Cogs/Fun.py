@@ -6,7 +6,7 @@ MIT License
 Copyright (c) 2020 huantian
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
+of this software and associated documentation files (the 'Software'), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 copies of the Software, and to permit persons to whom the Software is
@@ -15,7 +15,7 @@ furnished to do so, subject to the following conditions:
 The above copyright notice and this permission notice shall be included in all
 copies or substantial portions of the Software.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
 AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
@@ -33,6 +33,7 @@ import datetime
 import asyncio
 import re
 import magic8ball
+import aiosqlite
 
 
 class Fun(commands.Cog):
@@ -42,47 +43,59 @@ class Fun(commands.Cog):
          self.bot = bot
          level_3 = k.lvl3
          level_2 = k.lvl2
-         self.bot.banned = ['suicide', 'self-harm', 'kill', 'self harm', 'murder', "auttaja", "mesub", "steal", "rob", "commit", "hack", "mee6", "dyno", "rythm", "kms"]
-    global bot_owner_id
+         self.bot.banned = []
+         bot.loop.create_task(self.load_banned())
 
-    @commands.command(description="Produces a random number from 1!", help="Produces a random number from 1!")
+    async def load_banned(self):
+        await self.bot.wait_until_ready()
+        print('Loading banned words from database.')
+        self.bot.db.row_factory = aiosqlite.Row
+        query = await self.bot.db.execute('SELECT * FROM banned_words')
+        rows = await query.fetchall()
+        for row in rows:
+            self.bot.banned.append(f"{row['words']}")
+        print('Banned words loaded!')
+
+    @commands.command(description='Produces a random number from 1!', help='Produces a random number from 1!')
     async def random(self, ctx, limit=None):
         if limit is None:
-            await ctx.send("I need a number!")
+            await ctx.send('I need a number!')
         else:
             try:
                 result = randint(1, int(limit))
-                await ctx.send("The result is: %s!" % result)
+                await ctx.send('The result is: %s!' % result)
             except Exception as e:
-                await ctx.send("Invalid number! It needs to be a **whole** positive number.")
+                await ctx.send('Invalid number! It needs to be a **whole** positive number.')
 
     @commands.cooldown(3,60,BucketType.member)
-    @commands.command(description="Checks how pog somebody is!", help="Checks how pog somebody is!")
+    @commands.command(description='Checks how pog somebody is!', help='Checks how pog somebody is!')
     async def pog(self, ctx, member:discord.Member=None):
         pog_level = randint(1, 100)
         if pog_level == 100:
             if member is None:
                 member = ctx.author
-            await ctx.send(f"Well this time, I think that {member.name} is off the scale!")
+            await ctx.send(f'Well this time, I think that {member.name} is off the scale!')
         else:
-            if member is None and ctx.author.id == self.bot.owner_id:
-                await ctx.send("You are 100% pog! (As always 😉)")
+            if member is None and ctx.author.id in [self.bot.owner_id, 240035755458691072, 555459418591068170]:
+                await ctx.send('You are 100% pog! (As always 😉)')
             elif member is None:
                 member = ctx.author
-                await ctx.send(f"This time, I would say that you are {pog_level}% pog.")
+                await ctx.send(f'This time, I would say that you are {pog_level}% pog.')
             elif member.id == self.bot.user.id:
-                await ctx.send("I am 100% pog. No question.")
+                await ctx.send('I am 100% pog. No question.')
             elif member.id == self.bot.owner_id:
-                await ctx.send("mesub is 100% pog! (As always 😉)")
+                await ctx.send('mesub is 100% pog! (As always 😉)')
             elif member.id == 242730576195354624:
-                await ctx.send("Auttaja is beyond pog 😍😍")
+                await ctx.send('Auttaja is beyond pog 😍😍')
             elif member.id == 240035755458691072:
-                await ctx.send("Squid is 100% squidpog.")
+                await ctx.send('Squid is 100% squidpog.')
+            elif member.id == 555459418591068170:
+                await ctx.send('Armyman Liam is 100% pog. 💂‍♂️')
             else:
-                await ctx.send(f"This time, I would say that {member.name} is {pog_level}% pog.")
+                await ctx.send(f'This time, I would say that {member.name} is {pog_level}% pog.')
 
     @commands.cooldown(3,60,BucketType.member)
-    @commands.command(description="Checks how UWU somebody is.")
+    @commands.command(description='Checks how UWU somebody is.')
     async def uwu(self, ctx, member:discord.Member=None):
         uwu_level = randint(1, 100)
         if 0 <= uwu_level <= 25:
@@ -96,30 +109,30 @@ class Fun(commands.Cog):
         if uwu_level == 100:
             if member is None:
                 member = ctx.author
-            await ctx.send(f"Well this time, I think that {member.name} is uWu! (100%)")
+            await ctx.send(f'Well this time, I think that {member.name} is uWu! (100%)')
         else:
             if member is None and ctx.author.id == self.bot.owner_id:
-                await ctx.send("You are the top uWu (As always 😉)")
+                await ctx.send('You are the top uWu (As always 😉)')
             elif member is None:
                 member = ctx.author
-                await ctx.send(f"This time, I would say that you are {uwu} ({uwu_level}%).")
+                await ctx.send(f'This time, I would say that you are {uwu} ({uwu_level}%).')
             elif member.id == self.bot.user.id:
-                await ctx.send("I do not participate in this.")
+                await ctx.send('I do not participate in this.')
             elif member.id == self.bot.owner_id:
-                await ctx.send("mesub is uWu.(As always 😉)")
+                await ctx.send('mesub is uWu.(As always 😉)')
             elif member.id == 242730576195354624:
-                await ctx.send("Auttaja does not participate in this.")
+                await ctx.send('Auttaja does not participate in this.')
             else:
-                await ctx.send(f"This time, I would say that {member.name} is {uwu} ({uwu_level}%).")
+                await ctx.send(f'This time, I would say that {member.name} is {uwu} ({uwu_level}%).')
 
-    @commands.group(description="Ask Pogmas and get a response!")
+    @commands.group(description='Ask Pogmas and get a response!')
     async def ask(self, ctx):
         if ctx.invoked_subcommand is None:
-            await ctx.send("Command execution failed: Argument is missing! Correct usage:")
+            await ctx.send('Command execution failed: Argument is missing! Correct usage:')
             await ctx.send_help(ctx.command)
 
-    @ask.command(description="No nonsense. Get a yes, no or maybe answer.\
-    \nThese answers are randomly generated and are advisory only. Mesub is not responsible for anything that happens as a result of you following the bot's advice.")
+    @ask.command(description='No nonsense. Get a yes, no or maybe answer.\
+    \nThese answers are randomly generated and are advisory only. Mesub is not responsible for anything that happens as a result of you following the bot\'s advice.')
     async def basic(self, ctx, *, question):
         quest = re.sub(r'[.?!]', '', question)
         responses = ['y', 'n', 'm']
@@ -128,28 +141,28 @@ class Fun(commands.Cog):
         await ctx.channel.trigger_typing()
         await asyncio.sleep(3)
         if any(x in question.lower() for x in self.bot.banned) or m.mentioned_in(ctx.message):
-            await ctx.send("Your question contains matters of a sensitive nature, I wouldn't be able to asnwer it.")
+            await ctx.send('Your question contains matters of a sensitive nature, I wouldn\'t be able to asnwer it.')
             return
         if pick == 'y':
-            await ctx.send(f"Yes you should definitely {quest}.")
+            await ctx.send(f'Yes you should definitely {quest}.')
         elif pick == 'n':
-            await ctx.send(f"No you should not {quest}.")
+            await ctx.send(f'No you should not {quest}.')
         else:
-            await ctx.send(f"Hmmm, maybe you should {quest}... Maybe not...")
+            await ctx.send(f'Hmmm, maybe you should {quest}... Maybe not...')
 
-    @ask.command(name="ball", description="Ask the ball?\
-    \nThese answers are randomly generated and are advisory only. Mesub is not responsible for anything that happens as a result of you following the bot's advice.")
+    @ask.command(name='ball', description='Ask the ball?\
+    \nThese answers are randomly generated and are advisory only. Mesub is not responsible for anything that happens as a result of you following the bot\'s advice.')
     async def _8ball(self, ctx, question):
         ball = magic8ball.list
         if any(x in question.lower() for x in self.bot.banned):
-            await ctx.send("Your question contains matters of a sensitive nature, I wouldn't be able to asnwer it.")
+            await ctx.send('Your question contains matters of a sensitive nature, I wouldn\'t be able to asnwer it.')
             return
         await ctx.channel.trigger_typing()
         await asyncio.sleep(3)
         await ctx.send(choice(ball))
 
     @commands.check(k.lvl5)
-    @commands.command(description="Approves people to be added to the no cut list.")
+    @commands.command(description='Approves people to be added to the no cut list.')
     async def add(self, ctx, *ids:int):
         await ctx.channel.trigger_typing()
         with open('no_cut.txt', 'a+') as file:
@@ -158,51 +171,58 @@ class Fun(commands.Cog):
                 self.bot.no_cut.append(id)
                 x = self.bot.get_user(id)
                 try:
-                    await x.send(f"**Your case has been updated:**\nOperator {ctx.author} has approved your request with reason `Valid`.\nYou will no longer have your cut liked")
+                    await x.send(f'**Your case has been updated:**\nOperator {ctx.author} has approved your request with reason `Valid`.\nYou will no longer have your cut liked')
                 except Exception as e:
                     pass
             file.close()
-        await ctx.send(f"Users were added!")
+        await ctx.send(f'Users were added!')
 
     @commands.check(k.lvl5)
-    @commands.command(description="Rejects somebody to be added tt the no cut list.")
+    @commands.command(description='Rejects somebody to be added to the no cut list.')
     async def deny(self, ctx, ids: commands.Greedy[discord.Member], *, reason='None'):
         for id in ids:
             try:
-                await id.send(f"**Your case has been updated:**\nOperator {ctx.author} has denied your request with reason `{reason}`.\nYou may submit another request in 24 hours time.")
+                await id.send(f'**Your case has been updated:**\nOperator {ctx.author} has denied your request with reason `{reason}`.\nYou may submit another request in 24 hours time.')
             except Exception as e:
                 pass
-        await ctx.send("Users denied!")
+        await ctx.send('Users denied!')
 
     @commands.cooldown(1,240,BucketType.member)
     @commands.max_concurrency(3, per=BucketType.guild, wait=False)
     @commands.max_concurrency(1, per=BucketType.member, wait=False)
-    @commands.command(description="Likes somebody's cut.", help="I like ya cut g!")
+    @commands.command(description='Likes somebody\'s cut.', help='I like ya cut g!')
     async def cut(self, ctx, member:discord.Member=None):
         if member is None:
             member = ctx.author
-            await ctx.send("Why would you like your own cut silly.")
+            await ctx.send('Why would you like your own cut silly.')
+            ctx.command.reset_cooldown(ctx)
             return
         elif member.id in self.bot.no_cut:
-            await ctx.send("This user has opted out of having their cut liked.")
+            await ctx.send('This user has opted out of having their cut liked.')
+            ctx.command.reset_cooldown(ctx)
             return
         elif ctx.author.id in self.bot.no_cut:
-            await ctx.send("Remember that you agreed you won't like people's cuts so they don't like yours...")
+            await ctx.send('Remember that you agreed you won\'t like people\'s cuts so they don\'t like yours...')
+            ctx.command.reset_cooldown(ctx)
             return
         elif member is None and ctx.author.id == self.bot.owner_id:
-            await ctx.send("Why would you like your own cut mesub?")
+            await ctx.send('Why would you like your own cut mesub?')
+            ctx.command.reset_cooldown(ctx)
             return
         elif member.bot:
-            await ctx.send("As part of the Discord Bot Framework Agreement 2017, I cannot like another bot's cut.")
+            await ctx.send('As part of the Discord Bot Framework Agreement 2017, I cannot like another bot\'s cut.')
+            ctx.command.reset_cooldown(ctx)
             return
         elif member.id == self.bot.user.id:
-            await ctx.send("Glad you like it! (What would you think would happen?)")
+            await ctx.send('Glad you like it! (What would you think would happen?)')
+            ctx.command.reset_cooldown(ctx)
             return
         elif member.id == self.bot.owner_id:
-            await ctx.send("Command exucution failed: mesub's cut cannot be liked.")
+            await ctx.send('Command exucution failed: mesub\'s cut cannot be liked.')
+            ctx.command.reset_cooldown(ctx)
             return
         else:
-            await ctx.send("Cut liked 👌.")
+            await ctx.send('Cut liked 👌.')
         def check(user):
             return user.author.id == member.id and user.channel.category_id not in [497794660681646101, 653685359460483093]
         try:
@@ -211,65 +231,64 @@ class Fun(commands.Cog):
         except Exception as error:
             error = getattr(error, 'original', error)
             if isinstance(error, asyncio.TimeoutError):
-                await ctx.send(f"{ctx.author.mention}, I got bored of waiting for them so I cancelled it.")
+                await ctx.send(f'{ctx.author.mention}, I got bored of waiting for them so I cancelled it.')
                 return
             else:
-                await ctx.send(f"{ctx.author.mention}, I can't like their cut for reasons beyond my control.")
+                await ctx.send(f'{ctx.author.mention}, I can\'t like their cut for reasons beyond my control.')
                 return
-        await channel.send(f"<@{member.id}> <a:slap:790598778699776090>!")
-        await channel.send(f"You were slapped by {ctx.author}")
+        await channel.send(f'<@{member.id}> <a:slap:790598778699776090>!')
+        await channel.send(f'You were slapped by {ctx.author}')
 
-    @commands.command(help="How many days until Christmas?!?!")
+    @commands.command(help='How many days until Christmas?!?!')
     async def days(self, ctx):
         dt  = datetime.datetime
         now = dt.now()
         cd=dt(year=now.year, month=12,day=25) - dt(year=now.year, month=now.month, day=now.day)
-        await ctx.send(f'There are `'+str(cd)[:str(cd).find(",")]+'` until Christmas. 🎄')
+        await ctx.send(f'There are `'+str(cd)[:str(cd).find(',')]+'` until Christmas. 🎄')
 
 
-    @commands.command(help="Can you avoid the ghosts?", name="ghost", aliases=['gg'])
+    @commands.command(help='Can you avoid the ghosts?', name='ghost', aliases=['gg'])
     async def gg(self, ctx):
         feeling_brave = True
         score = 0
         while feeling_brave:
             if score == 0:
-                await ctx.send("__**Ghost Game**__\nThree doors ahead...\nA ghost behind one\n Which one do you choose.. 1, 2 or 3?")
+                await ctx.send('__**Ghost Game**__\nThree doors ahead...\nA ghost behind one\n Which one do you choose.. 1, 2 or 3?')
             else:
-                await ctx.send("Three doors ahead...\nA ghost behind one\n Which one do you choose.. 1, 2 or 3?")
+                await ctx.send('Three doors ahead...\nA ghost behind one\n Which one do you choose.. 1, 2 or 3?')
             gdoor = randint(1,3)
             def check(message):
-                return message.author == ctx.author and message.channel == ctx.channel and message.content in ("1", "2", "3")
+                return message.author == ctx.author and message.channel == ctx.channel and message.content in ('1', '2', '3')
             try:
                 s = await self.bot.wait_for('message', check=check, timeout=30.0)
                 door = int(s.content)
             except asyncio.TimeoutError:
                 feeling_brave = False
-                await ctx.send(f"Game over: you took too long. Score `{score}`.")
+                await ctx.send(f'Game over: you took too long. Score `{score}`.')
                 return
             if door == gdoor:
-                await ctx.send("Ghost! 👻\nRun away!")
-                await ctx.send(f"Game over. Score: `{score}`.")
+                await ctx.send('Ghost! 👻\nRun away!')
+                await ctx.send(f'Game over. Score: `{score}`.')
                 feeling_brave = False
             else:
-                await ctx.send("No ghost!\nYou enter the next room...")
+                await ctx.send('No ghost!\nYou enter the next room...')
                 score = score + 1
 
     @commands.cooldown(3,40,BucketType.member)
-    @commands.command(help="Produces a random shaun from the mini-bank!")
+    @commands.command(help='Produces a random shaun from the mini-bank!')
     async def shaun(self, ctx):
-        list = ['<:shaunusa:774986283381948466>', '<:shaunup:774986279133773834>', '<:shauntrain:774986281217425428>',\
-        '<:shaunra:774987341142949929>', '<:shaunpm:774986282682155018>', '<:shaunold:774986281334997012>', '<:shaunit:774986278004850689>',\
-        '<:shaunhug:774986283835326466>', '<:shaunhand:774987343353479219>', '<:shaun2:774986280073166900>', '<:shaun:699731917729300603>']
-        await ctx.send(f"This time, it's {choice(list)}!")
+        list = ['<:shaunup:810532538241122335>', '<:shauntrain:810532539596537906>', '<:shaunra:810532540808167464>', '<:shaunpm:810532540183478332>', '<:shaunold:810532539634548736>',\
+         '<:shaunit:810532536458543114>', '<:shaunhug:810532540594389022>', '<:shaunhand:810532537449185350>', '<:shaun2:810532534982279169>', '<:shaun:810534623351537665>']
+        await ctx.send(f'This time, it\'s {choice(list)}!')
 
 
     @commands.guild_only()
-    @commands.command(help="Can you react in time?")
+    @commands.command(help='Can you react in time?')
     async def thumbs(self, ctx):
         score = 0
         good_terms = True
         bank = ['🚒','😄','😉','🥛','🍼','😘','🤗','🤔','😍','😡','😱','🦷','👀','🦈','🍫','🍓','🍍','🍎','🚍','🚌', '😎']
-        names = ["Cocker", "m8", "fam", "mandem", "bro", "g", "guy"]
+        names = ['Cocker', 'm8', 'fam', 'mandem', 'bro', 'g', 'guy']
         try:
             await ctx.message.delete()
         except Exception as e:
@@ -290,44 +309,48 @@ class Fun(commands.Cog):
             except asyncio.TimeoutError:
                 await msg.delete()
                 await ctx.send('Slow! :snail:')
-                await ctx.send(f"Game over! Your score was `{score}`")
+                await ctx.send(f'Game over! Your score was `{score}`')
                 good_terms = False
                 return
             else:
-                await ctx.send(f"Good job {ctx.author.name} :thumbsup:")
+                await ctx.send(f'Good job {ctx.author.name} :thumbsup:')
+                try:
+                    await msg.delete()
+                except Exception as e:
+                    pass
                 bank.remove(emoji)
                 score = score + 1
             if not bank:
-                await ctx.send(f"You've beat the game, {ctx.author.name}! Good work.\nYour score is {score}.")
+                await ctx.send(f'You\'ve beat the game, {ctx.author.name}! Good work.\nYour score is {score}.')
                 good_terms = False
                 return
 # Tic tac toe stuff
     global emoji_dict
     emoji_dict = {
-    u"\u2196": 0,
-    u"\u2B06": 1,
-    u"\u2197": 2,
-    u"\u2B05": 3,
-    u"\u23FA": 4,
-    u"\u27A1": 5,
-    u"\u2199": 6,
-    u"\u2B07": 7,
-    u"\u2198": 8
+    u'\u2196': 0,
+    u'\u2B06': 1,
+    u'\u2197': 2,
+    u'\u2B05': 3,
+    u'\u23FA': 4,
+    u'\u27A1': 5,
+    u'\u2199': 6,
+    u'\u2B07': 7,
+    u'\u2198': 8
 }
 
 
     def make_grid_internals(self, grid):
         """Converts the normal grid list into human-readable version."""
 		# Replace all values in the grid list with emojis
-        new_grid = [":white_large_square:" if (not x)
-                else ":regional_indicator_x:" if x == 1
-                else ":o2:" if x == 2
-                else "?"
+        new_grid = [':white_large_square:' if (not x)
+                else ':regional_indicator_x:' if x == 1
+                else ':o2:' if x == 2
+                else '?'
                 for x in grid]
 
 
 		# Adds a new line every three emojis.
-        return "\n".join("".join(new_grid[i:i + 3]) for i in range(0, len(new_grid), 3))
+        return '\n'.join(''.join(new_grid[i:i + 3]) for i in range(0, len(new_grid), 3))
 
 
 
@@ -336,27 +359,27 @@ class Fun(commands.Cog):
         """Draws the initial grid of the game."""
         grid = self.make_grid_internals(grid)
         current_player = player1 if current_player == 1 else player2
-        self.bot.ttt_description = f"**Tic-Tac-Toe game between** `{str(player1)}` **and** `{str(player2)}`\n\n`{str(player1)}`: \U0001f1fd\n`{str(player2)}`: 🅾\n\nCurrent turn: {current_player.mention}."
+        self.bot.ttt_description = f'**Tic-Tac-Toe game between** `{str(player1)}` **and** `{str(player2)}`\n\n`{str(player1)}`: \U0001f1fd\n`{str(player2)}`: 🅾\n\nCurrent turn: {current_player.mention}.'
 
 
-        return await message.edit(content=f"{self.bot.ttt_description}\n\n**Grid:**\n{grid}")
+        return await message.edit(content=f'{self.bot.ttt_description}\n\n**Grid:**\n{grid}')
 
 
     async def edit_grid(self, message, grid, player1, player2, current_player):
         grid = self.make_grid_internals(grid)
 
         current_player = player1 if current_player == 1 else player2
-        self.bot.ttt_description = f"**Tic-Tac-Toe game between** `{str(player1)}` **and** `{str(player2)}`\n\n`{str(player1)}`: \U0001f1fd\n`{str(player2)}`: 🅾\n\nCurrent turn: {current_player.mention}."
-        await message.edit(content=f"{self.bot.ttt_description}\n\n**Grid:**\n{grid}")
+        self.bot.ttt_description = f'**Tic-Tac-Toe game between** `{str(player1)}` **and** `{str(player2)}`\n\n`{str(player1)}`: \U0001f1fd\n`{str(player2)}`: 🅾\n\nCurrent turn: {current_player.mention}.'
+        await message.edit(content=f'{self.bot.ttt_description}\n\n**Grid:**\n{grid}')
 
 
     async def edit_grid_end(self, message, grid, player1, player2, current_player, end_message):
         grid = self.make_grid_internals(grid)
 
         current_player = player1 if current_player == 1 else player2
-        description_end = f"**Tic-Tac-Toe game between** `{str(player1)}` **and** `{str(player2)}`\n\n`{str(player1)}`: \U0001f1fd\n`{str(player2)}`: 🅾\n\n{end_message}"
+        description_end = f'**Tic-Tac-Toe game between** `{str(player1)}` **and** `{str(player2)}`\n\n`{str(player1)}`: \U0001f1fd\n`{str(player2)}`: 🅾\n\n{end_message}'
 
-        await message.edit(content=f"{description_end}\n\n**Grid:**\n{grid}")
+        await message.edit(content=f'{description_end}\n\n**Grid:**\n{grid}')
 
 
     def win_indexes(self, n):
@@ -386,7 +409,7 @@ class Fun(commands.Cog):
                 return 1
             elif self.is_winner([grid[i:i + 3] for i in range(0, len(grid), 3)], 2):
                 return 2
-            return "draw"
+            return 'draw'
         elif self.is_winner([grid[i:i + 3] for i in range(0, len(grid), 3)], 1):
             return 1
         elif self.is_winner([grid[i:i + 3] for i in range(0, len(grid), 3)], 2):
@@ -406,14 +429,14 @@ class Fun(commands.Cog):
 
 		# Makes sure that the player isn't a bot.
         if player2.bot:
-            await ctx.send("You can't play against a bot!")
+            await ctx.send('You can\'t play against a bot!')
             return
 
         if player2 == ctx.author:
-            await ctx.send("You can't play against yourself you cheat!")
+            await ctx.send('You can\'t play against yourself you cheat!')
             return
 
-        sure = await ctx.send(f"{player2.mention}, **{str(ctx.author)}** has challenged you to a game of **Tic-Tac-Toe.**\nDo you accept?")
+        sure = await ctx.send(f'{player2.mention}, **{str(ctx.author)}** has challenged you to a game of **Tic-Tac-Toe.**\nDo you accept?')
         def check_x(reaction, user):
             return user == player2
         await sure.add_reaction('👍')
@@ -421,13 +444,13 @@ class Fun(commands.Cog):
         try:
             reaction, user = await self.bot.wait_for('reaction_add', check=check_x, timeout=20.0)
         except asyncio.TimeoutError:
-            await ctx.send("I see you took too long so I cancelled it...")
+            await ctx.send('I see you took too long so I cancelled it...')
             return
         if str(reaction.emoji) == '👎':
-            await ctx.send("Oh? You're not up for it? All good.")
+            await ctx.send('Oh? You\'re not up for it? All good.')
             return
 		# Creates and sends the initial grid
-        message = await ctx.send("Preparing the grid, one second...")
+        message = await ctx.send('Preparing the grid, one second...')
         grid = [0 for x in range(9)]
         for emoji in emoji_dict:
             await message.add_reaction(emoji)
@@ -447,24 +470,24 @@ class Fun(commands.Cog):
 
 		# Waits for a reaction, edits grid and used emojis accordingly
             try:
-                reaction, user = await self.bot.wait_for("reaction_add", check=check, timeout=60.0)
+                reaction, user = await self.bot.wait_for('reaction_add', check=check, timeout=60.0)
             except asyncio.TimeoutError:
                 running = False
-                await ctx.send(f"Game canceled as `{str(current_player_object)}` took too long.")
+                await ctx.send(f'Game canceled as `{str(current_player_object)}` took too long.')
                 return
             else:
-                grid[emoji_dict[reaction.emoji]] = 1 if current_player == 1 else 2 if current_player == 2 else "??"
+                grid[emoji_dict[reaction.emoji]] = 1 if current_player == 1 else 2 if current_player == 2 else '??'
                 used_emojis.append(reaction.emoji)
 
             end = self.check_for_end(grid)
-            if end == "draw":
-                await self.edit_grid_end(message, grid, player1, player2, current_player, "It's a draw!")
+            if end == 'draw':
+                await self.edit_grid_end(message, grid, player1, player2, current_player, 'It\'s a draw!')
                 running = False
             elif end == 1:
-                await self.edit_grid_end(message, grid, player1, player2, current_player, f"{player1.mention} has won!")
+                await self.edit_grid_end(message, grid, player1, player2, current_player, f'{player1.mention} has won!')
                 running = False
             elif end == 2:
-                await self.edit_grid_end(message, grid, player1, player2, current_player, f"{player2.mention} has won!")
+                await self.edit_grid_end(message, grid, player1, player2, current_player, f'{player2.mention} has won!')
                 running = False
             else:
 				# Switch current player to next player
