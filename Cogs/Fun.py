@@ -50,7 +50,7 @@ class Fun(commands.Cog):
         await self.bot.wait_until_ready()
         print('Loading banned words from database.')
         self.bot.db.row_factory = aiosqlite.Row
-        query = await self.bot.db.execute('SELECT * FROM banned_words')
+        query = await self.bot.db.execute('SELECT * FROM banned_words;')
         rows = await query.fetchall()
         for row in rows:
             self.bot.banned.append(f"{row['words']}")
@@ -152,30 +152,96 @@ class Fun(commands.Cog):
 
     @ask.command(name='ball', description='Ask the ball?\
     \nThese answers are randomly generated and are advisory only. Mesub is not responsible for anything that happens as a result of you following the bot\'s advice.')
-    async def _8ball(self, ctx, question):
+    async def _8ball(self, ctx, *, question):
         ball = magic8ball.list
-        if any(x in question.lower() for x in self.bot.banned):
+        await ctx.channel.trigger_typing()
+        m = self.bot.get_user(242730576195354624) #auttaja
+        if any(x in question.lower() for x in self.bot.banned) or m.mentioned_in(ctx.message):
             await ctx.send('Your question contains matters of a sensitive nature, I wouldn\'t be able to asnwer it.')
             return
-        await ctx.channel.trigger_typing()
         await asyncio.sleep(3)
         await ctx.send(choice(ball))
 
     @commands.check(k.lvl5)
+    @ask.command(name='add', description='Adds a banned word to the list.')
+    async def _add(self, ctx, *words):
+        async with ctx.channel.typing():
+            failed = []
+            for word in words:
+                try:
+                    await self.bot.db.execute('INSERT INTO banned_words VALUES(?);', (word,))
+                    self.bot.banned.append(word)
+                except Exception as e:
+                    failed.append(word)
+            await self.bot.db.commit()
+            if not failed:
+                await ctx.send('All words were added!')
+            else:
+                x = '\n'
+                await ctx.send(f'Some words were not added...\n```\n{x.join(str(f) for f in failed)}\n```')
+
+    @commands.check(k.lvl5)
+    @ask.command(name='remove', description='Removes a banned word from the list')
+    async def _remove(self, ctx, *words):
+        async with ctx.channel.typing():
+            failed=[]
+            for word in words:
+                try:
+                    await self.bot.db.execute('DELETE FROM banned_words WHERE words=?;', (word,))
+                    self.bot.banned.remove(word)
+                except Exception as e:
+                    failed.append(word)
+            await self.bot.db.commit()
+            if not failed:
+                await ctx.send('All words were removed!')
+            else:
+                x = '\n'
+                await ctx.send(f'Some words were not removed...\n```\n{x.join(str(f) for f in failed)}\n```')
+
+
+    @commands.check(k.lvl5)
     @commands.command(description='Approves people to be added to the no cut list.')
     async def add(self, ctx, *ids:int):
-        await ctx.channel.trigger_typing()
-        with open('no_cut.txt', 'a+') as file:
+        async with ctx.channel.typing():
+            failed = []
             for id in ids:
-                file.write(f'\n{id}')
-                self.bot.no_cut.append(id)
-                x = self.bot.get_user(id)
                 try:
+                    await self.bot.db.execute('INSERT INTO cuts VALUES(?)', (id,))
+                    self.bot.no_cut.append(id)
+                    x = self.bot.get_user(id)
                     await x.send(f'**Your case has been updated:**\nOperator {ctx.author} has approved your request with reason `Valid`.\nYou will no longer have your cut liked')
-                except Exception as e:
-                    pass
-            file.close()
-        await ctx.send(f'Users were added!')
+                except aiosqlite.IntegrityError:
+                    await ctx.send(f'User `{id}` was already inside the no-cut list!')
+                except discord.Forbidden:
+                    failed.append(id)
+            await self.bot.db.commit()
+            if not failed:
+                await ctx.send('User(s) were added!')
+            else:
+                x = '\n'
+                await ctx.send(f'All users were added but users with the following IDs were not notified.\n```py\n{x.join(str(f) for f in failed)}\n```')
+
+    @commands.check(k.lvl5)
+    @commands.command(description='Removes somebody from the no cut list.')
+    async def remove(self, ctx, *ids:int):
+        async with ctx.channel.typing():
+            failed = []
+            for id in ids:
+                try:
+                    await self.bot.db.execute('DELETE FROM cuts WHERE id=?;', (id,))
+                    self.bot.no_cut.remove(id)
+                    x = self.bot.get_user(id)
+                    await x.send(f'**Your case has been updated:**\nOperator {ctx.author} has approved your request with reason `Valid`.\nYou will now be able to have your cut liked.')
+                except discord.Forbidden:
+                    failed.append(id)
+                except ValueError:
+                    await ctx.send(f'User with ID `{id}` not in list!')
+            await self.bot.db.commit()
+            if not failed:
+                await ctx.send('User(s) were removed!')
+            else:
+                x = '\n'
+                await ctx.send(f'All users were removed but users with the following IDs were not notified.\n```py\n{x.join(str(f) for f in failed)}\n```')
 
     @commands.check(k.lvl5)
     @commands.command(description='Rejects somebody to be added to the no cut list.')
