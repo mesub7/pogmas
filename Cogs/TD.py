@@ -156,8 +156,8 @@ class TD(commands.Cog):
                 if row is None:
                     list.append(f'{person} has not been a questioner')
                 else:
-                    list.append(f'{person} has been a questioner `{row['times']}`.')
-        await ctx.send(f'```\n{x.join(str(item) for item in list)}\n```)
+                    list.append(f"{person} has been a questioner `{row['times']}`.")
+        await ctx.send(f'```\n{x.join(str(item) for item in list)}\n```')
 
     @questioner.command(help='Lists questioners')
     async def list(self, ctx):
