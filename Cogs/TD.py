@@ -94,6 +94,9 @@ class TD(commands.Cog):
     async def opt_out(self, ctx, *, reason):
         def check(reaction, user):
             return user == ctx.author
+        if 'monster' in reason.lower():
+            await ctx.message.add_reaction('🚫')
+            return
         msg = await ctx.send('Are you sure you want to opt out of having your cut liked? This isn\'t a **light** decision and mesub will be (now less) annoyed if he has to remove you from this list.\n```\nYou also agree that you will not be able to like other people\'s cuts.\n```')
         await msg.add_reaction('👍')
         await msg.add_reaction('👎')
