@@ -148,7 +148,7 @@ class TD(commands.Cog):
 
     @commands.check(k.lvl3)
     @commands.group(invoke_without_command=True)
-    async def questioner(self, ctx, *questioners:discord.Member):
+    async def questioner(self, ctx, *questioners:discord.User):
         async with ctx.channel.typing():
             list = []
             print('hi')
@@ -178,7 +178,7 @@ class TD(commands.Cog):
 
     @questioner.command(help='Adds or edits a questioner to the list.',
     description='The number will override (not add) the current number in the list')
-    async def add(self, ctx, person:discord.Member, times:int = 1):
+    async def add(self, ctx, person:discord.User, times:int = 1):
         async with ctx.channel.typing():
             query = await self.bot.db.execute('SELECT * FROM questioner WHERE id=?;', (person.id,))
             row = await query.fetchone()
