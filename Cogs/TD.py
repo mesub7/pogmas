@@ -143,7 +143,7 @@ class TD(commands.Cog):
         row = await x.fetchall()
         for rows in row:
             user = self.bot.get_user(rows['id'])
-            list.append(f"{user + ' (' + str(rows['id']) + ').  ' + str(rows['times'])}")
+            list.append(f"{str(user) + ' (' + str(rows['id']) + ').  ' + str(rows['times'])}")
         return None if not list else list
 
     @commands.check(k.lvl3)
@@ -151,15 +151,17 @@ class TD(commands.Cog):
     async def questioner(self, ctx, *questioners:discord.Member):
         async with ctx.channel.typing():
             list = []
+            print('hi')
             self.bot.db.row_factory = aiosqlite.Row
             x = '\n'
-            for person.id in questioners:
-                query = await self.db.execute('SELECT * FROM questioner WHERE ID=?;', (person.id,))
+            for person in questioners:
+                query = await self.bot.db.execute('SELECT * FROM questioner WHERE ID=?;', (person.id,))
                 row = await query.fetchone()
+                print(type(row))
                 if row is None:
                     list.append(f'{person} has not been a questioner')
                 else:
-                    list.append(f"{person} has been a questioner `{row['times']}`.")
+                    list.append(f"{person} has been a questioner `{row['times']}` time(s).")
         await ctx.send(f'```\n{x.join(str(item) for item in list)}\n```')
 
     @questioner.command(help='Lists questioners')
@@ -179,7 +181,7 @@ class TD(commands.Cog):
     async def add(self, ctx, person:discord.Member, times:int = 1):
         async with ctx.channel.typing():
             query = await self.bot.db.execute('SELECT * FROM questioner WHERE id=?;', (person.id,))
-            row = query.fetchone()
+            row = await query.fetchone()
             if row is not None:
                 await self.bot.db.execute('UPDATE questioner SET times=? WHERE id=?', (times, person.id))
                 await self.bot.db.commit()
