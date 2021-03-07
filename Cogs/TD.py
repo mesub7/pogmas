@@ -151,13 +151,11 @@ class TD(commands.Cog):
     async def questioner(self, ctx, *questioners:discord.User):
         async with ctx.channel.typing():
             list = []
-            print('hi')
             self.bot.db.row_factory = aiosqlite.Row
             x = '\n'
             for person in questioners:
                 query = await self.bot.db.execute('SELECT * FROM questioner WHERE ID=?;', (person.id,))
                 row = await query.fetchone()
-                print(type(row))
                 if row is None:
                     list.append(f'{person} has not been a questioner')
                 else:
@@ -178,7 +176,7 @@ class TD(commands.Cog):
 
     @questioner.command(help='Adds or edits a questioner to the list.',
     description='The number will override (not add) the current number in the list')
-    async def add(self, ctx, person:discord.User, times:int = 1):
+    async def add(self, ctx, person:discord.User, times:float = 1):
         async with ctx.channel.typing():
             query = await self.bot.db.execute('SELECT * FROM questioner WHERE id=?;', (person.id,))
             row = await query.fetchone()
