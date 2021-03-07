@@ -212,7 +212,7 @@ class Fun(commands.Cog):
                     await x.send(f'**Your case has been updated:**\nOperator {ctx.author} has approved your request with reason `Valid`.\nYou will no longer have your cut liked')
                 except aiosqlite.IntegrityError:
                     await ctx.send(f'User `{id}` was already inside the no-cut list!')
-                except discord.Forbidden:
+                except discord.Forbidden or discord.HTTPException:
                     failed.append(id)
             await self.bot.db.commit()
             if not failed:
