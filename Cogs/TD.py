@@ -147,7 +147,7 @@ class TD(commands.Cog):
         return None if not list else list
 
     @commands.check(k.lvl3)
-    @commands.group()
+    @commands.group(invoke_without_command=True)
     async def questioner(self, ctx, *questioners:discord.Member):
         async with ctx.channel.typing():
             list = []
