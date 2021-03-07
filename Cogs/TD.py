@@ -2,6 +2,8 @@ import discord
 from discord.ext import commands, tasks
 import asyncio
 import datetime
+import Cogs.Checks as k
+import aiosqlite
 
 class TD(commands.Cog):
     """The Transport Dash Cog. Contains functions exclusive to Transport Dash"""
@@ -88,7 +90,7 @@ class TD(commands.Cog):
     async def before_pick(self):
         await self.bot.wait_until_ready()
 
-    @commands.command(aliases=["oo"], help='Would you like to not have your cut liked?', description='Your reason should be short and sweet.')
+    @commands.command(aliases=['oo'], help='Would you like to not have your cut liked?', description='Your reason should be short and sweet.')
     async def opt_out(self, ctx, *, reason):
         def check(reaction, user):
             return user == ctx.author
@@ -130,6 +132,60 @@ class TD(commands.Cog):
         channel = self.bot.get_channel(790618543904915486)
         await channel.send(f'__**New **opt in** request from: {str(ctx.author)}**__\nThe reason is:\n`{reason}`\nTheir ID is:')
         await channel.send(f"{ctx.author.id}")
+
+    async def db_to_embed(self):
+        list = []
+        self.bot.db.row_factory = aiosqlite.Row
+        x = await self.bot.db.execute('SELECT * FROM questioner;')
+        row = await x.fetchall()
+        for rows in row:
+            user = self.bot.get_user(rows['id'])
+            list.append(f"{user + ' (' + str(rows['id']) + ').  ' + str(rows['times'])}")
+        return None if not list else list
+
+    @commands.check(k.lvl3)
+    @commands.group()
+    async def questioner(self, ctx, *questioners:discord.Member):
+        async with ctx.channel.typing():
+            list = []
+            self.bot.db.row_factory = aiosqlite.Row
+            x = '\n'
+            for person.id in questioners:
+                query = await self.db.execute('SELECT * FROM questioner WHERE ID=?;', (person.id,))
+                row = await query.fetchone()
+                if row is None:
+                    list.append(f'{person} has not been a questioner')
+                else:
+                    list.append(f'{person} has been a questioner `{row['times']}`.')
+        await ctx.send(f'```\n{x.join(str(item) for item in list)}\n```)
+
+    @questioner.command(help='Lists questioners')
+    async def list(self, ctx):
+        x = '\n'
+        list = await self.db_to_embed()
+        if list is not None:
+            formatted_questioners = x.join(str(item) for item in list)
+        else:
+            formatted_questioners = 'No questioners found.'
+        embed = discord.Embed(title='All questioners.',
+        description=f'{formatted_questioners}', colour=discord.Colour.orange())
+        await ctx.send(embed=embed)
+
+    @questioner.command(help='Adds or edits a questioner to the list.',
+    description='The number will override (not add) the current number in the list')
+    async def add(self, ctx, person:discord.Member, times:int = 1):
+        async with ctx.channel.typing():
+            query = await self.bot.db.execute('SELECT * FROM questioner WHERE id=?;', (person.id,))
+            row = query.fetchone()
+            if row is not None:
+                await self.bot.db.execute('UPDATE questioner SET times=? WHERE id=?', (times, person.id))
+                await self.bot.db.commit()
+                await ctx.send(f'`{person}`, has now been questioner `{times}` times!')
+                return
+            else:
+                await self.bot.db.execute('INSERT INTO questioner(id, times) VALUES(?,?)', (person.id, times))
+                await self.bot.db.commit()
+                await ctx.send(f'`{person}`, has now been added to the db and has been a questioner `{times}` times!')
 
 def setup(bot):
     bot.add_cog(TD(bot))
