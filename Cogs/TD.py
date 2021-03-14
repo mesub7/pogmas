@@ -94,9 +94,11 @@ class TD(commands.Cog):
     async def opt_out(self, ctx, *, reason):
         def check(reaction, user):
             return user == ctx.author
-        if 'monster' in reason.lower():
+        if ('m0nster','monster', 'poo', 'pee') in reason.lower():
             await ctx.message.add_reaction('🚫')
             return
+        elif 'help' in reason.lower():
+            await ctx.send_help(ctx.command)
         msg = await ctx.send('Are you sure you want to opt out of having your cut liked? This isn\'t a **light** decision and mesub will be (now less) annoyed if he has to remove you from this list.\n```\nYou also agree that you will not be able to like other people\'s cuts.\n```')
         await msg.add_reaction('👍')
         await msg.add_reaction('👎')
@@ -143,7 +145,7 @@ class TD(commands.Cog):
         row = await x.fetchall()
         for rows in row:
             user = self.bot.get_user(rows['id'])
-            list.append(f"{str(user) + ' (' + str(rows['id']) + ').  ' + str(rows['times'])}")
+            list.append(f"{str(user) + ' (' + str(rows['id']) + ')  ' + str(rows['times'])}")
         return None if not list else list
 
     @commands.check(k.lvl3)
@@ -165,14 +167,19 @@ class TD(commands.Cog):
     @questioner.command(help='Lists questioners')
     async def list(self, ctx):
         x = '\n'
+        paginator = commands.Paginator(prefix='```css\n')
         list = await self.db_to_embed()
         if list is not None:
+            for item in list:
+                paginator.add_line(item)
             formatted_questioners = x.join(str(item) for item in list)
         else:
             formatted_questioners = 'No questioners found.'
-        embed = discord.Embed(title='All questioners.',
-        description=f'{formatted_questioners}', colour=discord.Colour.orange())
-        await ctx.send(embed=embed)
+        #embed = discord.Embed(title='All questioners.',
+        #description=f'{formatted_questioners}', colour=discord.Colour.orange())
+        #paginator.add_line(embed)
+        for page in paginator.pages:
+            await ctx.send(page)
 
     @questioner.command(help='Adds or edits a questioner to the list.',
     description='The number will override (not add) the current number in the list')
