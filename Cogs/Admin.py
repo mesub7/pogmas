@@ -28,6 +28,15 @@ class Admin(commands.Cog):
     @commands.command(description="Restarts the bot.")
     async def restart(self, ctx):
         await ctx.send("Ok! I'll restart now...")
+        try:
+            await self.bot.db.commit()
+            await self.bot.db.close()
+        except Exception:
+            print('------')
+            print("No connection to databse, skipping...")
+            print('------')
+        print("Shutting down...")
+        print('------')
         await self.bot.close()
 
     @commands.check(k.lvl5)

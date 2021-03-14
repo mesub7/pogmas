@@ -52,7 +52,7 @@ class PogmasHelpCommand(commands.HelpCommand):
             if command.qualified_name in ('say', 'dm'):
                 await ctx.send(f"No command called \"{command}\" found.")
             else:
-                await ctx.send("Command execution failed: You do not have the required permissions to run this command. Therefore you are not permitted to see its help.")
+                await ctx.send("Command execution failed: You do not have the required permissions to run this command. Therefore, you are not permitted to see its help.")
 
     def add_extra(self, group):
         if group.invoke_without_command: # Add extra stuff for groups
@@ -73,24 +73,23 @@ class PogmasHelpCommand(commands.HelpCommand):
     async def send_group_help(self, group):
         ctx = self.context
         bot = ctx.bot
-        all_commands = [command for command in await self.filter_commands(group.walk_commands(), sort=True)] # Still checking if they can run anything
+        all_commands = [command for command in await self.filter_commands(group.walk_commands(), sort=True) if not command.hidden] # Still checking if they can run anything
         if not all_commands:
             await ctx.send("Command execution failed: You do not have the required permissions to run this group command (or any of its subcommands) so there is nothing to show.")
         else:
             embed = discord.Embed(title=f'{group.qualified_name}', description=f'```\nUsage: {self.clean_prefix}{group.qualified_name} {self.add_extra(group)}\n\n{self.get_group_help(group)}\n```',
             color=discord.Colour.blue())
             for c in all_commands:
-                if not c.hidden:
-                    signature = self.get_command_signature(c)
-                    description = self.get_command_description(c)
-                    if c.parent:  # it is a sub-command
-                        embed.add_field(name=f'**╚╡**{signature}', value=description)
+                signature = self.get_command_signature(c)
+                description = self.get_command_description(c)
+                if c.parent:  # it is a sub-command
+                    embed.add_field(name=f'**╚╡**{signature}', value=description)
             await ctx.send(embed=embed)
 
     async def send_cog_help(self, cog):
         ctx = self.context
         bot = ctx.bot
-        all_commands = [command for command in await self.filter_commands(cog.walk_commands(), sort=True)] # Again. checking if they can run anything
+        all_commands = [command for command in await self.filter_commands(cog.walk_commands(), sort=True) if not command.hidden] # Again. checking if they can run anything
         if not all_commands:
             await ctx.send("Command execution failed: You cannot run any commands in this cog so there is nothing to show.")
         else:
@@ -98,15 +97,12 @@ class PogmasHelpCommand(commands.HelpCommand):
             description=cog.description, color=discord.Colour.blue())
             embed.set_thumbnail(url=ctx.bot.user.avatar_url)
             for c in all_commands:
-                if c.hidden:
-                    pass
-                elif not c.hidden:
-                    signature = self.get_command_signature(c)
-                    description = self.get_command_description(c)
-                    if c.parent:  # it is a sub-command
-                        embed.add_field(name=f'**╚╡**{signature}', value=description)
-                    else:
-                        embed.add_field(name=signature, value=description, inline=False)
+                signature = self.get_command_signature(c)
+                description = self.get_command_description(c)
+                if c.parent:  # it is a sub-command
+                    embed.add_field(name=f'**╚╡**{signature}', value=description)
+                else:
+                    embed.add_field(name=signature, value=description, inline=False)
             embed.set_footer(text=f'Use "{self.clean_prefix}help <command>" for more info on a command.')
             await ctx.send(embed=embed)
 
@@ -118,7 +114,7 @@ class PogmasHelpCommand(commands.HelpCommand):
         true_cogs = list(bot.cogs)  # get all of your cogs
         for cog in cogs:
             coga = bot.get_cog(cog)
-            all_commands = [command for command in await self.filter_commands(coga.walk_commands(), sort=True)]
+            all_commands = [command for command in await self.filter_commands(coga.walk_commands(), sort=True) if not command.hidden]
             if not all_commands:
                 cogs.remove(cog)
         cmd = bot.get_command('jishaku')
@@ -215,15 +211,12 @@ class PogmasHelpCommand(commands.HelpCommand):
         ctx = self.context
         bot = ctx.bot
         cog = bot.get_cog(cogs[page])   # get the current cog
-        all_commands = [command for command in await self.filter_commands(cog.walk_commands(), sort=True)] # filter the commands the user can use
+        all_commands = [command for command in await self.filter_commands(cog.walk_commands(), sort=True) if not command.hidden] # filter the commands the user can use
         embed = discord.Embed(title=f'Help with {cog.qualified_name}',
                               description=cog.description, color=discord.Colour.blue())
         embed.set_author(name=f'Page {page + 1}')
         embed.set_thumbnail(url=ctx.bot.user.avatar_url)
         for c in all_commands:
-            if c.hidden:
-                pass
-            elif not c.hidden:
                 signature = self.get_command_signature(c)
                 description = self.get_command_description(c)
                 if c.parent:  # it is a sub-command
