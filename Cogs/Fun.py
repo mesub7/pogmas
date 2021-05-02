@@ -393,22 +393,22 @@ class Fun(commands.Cog):
 # Tic tac toe stuff
     global emoji_dict
     emoji_dict = {
-    u'\u2196': 0,
-    u'\u2B06': 1,
-    u'\u2197': 2,
-    u'\u2B05': 3,
-    u'\u23FA': 4,
-    u'\u27A1': 5,
-    u'\u2199': 6,
-    u'\u2B07': 7,
-    u'\u2198': 8
+    '↖️': 0,
+    '⬆️': 1,
+    '↗️': 2,
+    '⬅️': 3,
+    '⏺️': 4,
+    '➡️': 5,
+    '↙️': 6,
+    '⬇️': 7,
+    '↘️': 8
 }
 
 
     def make_grid_internals(self, grid):
         """Converts the normal grid list into human-readable version."""
 		# Replace all values in the grid list with emojis
-        new_grid = [':white_large_square:' if (not x)
+        new_grid = [':white_large_square:' if not x
                 else ':regional_indicator_x:' if x == 1
                 else ':o2:' if x == 2
                 else '?'
@@ -487,7 +487,8 @@ class Fun(commands.Cog):
     @commands.command()
     async def ttt(self, ctx, player2: commands.MemberConverter):
         """Starts a Tic-Tac-Toe game with the specified player!"""
-        player1 = ctx.author
+        player1 = random.choice(ctx.author, player2)
+        player2 = player2 if ctx.author == player1 else player1
         current_player = 1
         running = True
         used_emojis = []
