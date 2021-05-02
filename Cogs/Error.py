@@ -113,6 +113,10 @@ class CommandErrorHandler(commands.Cog, name="Command Backend Helper"):
 
         elif isinstance(error, asyncio.TimeoutError):
             await ctx.message.add_reaction('⌛')
+
+        elif isinstance(error, AttributeError) and ctx.command == 'help':
+                embed = discord.Embed(title='No DM help.', description='You cannot run the help command here. Sorry!', colour=discord.Colour.red())
+                await ctx.send(embed=embed)
         else:
             # All other Errors not returned come here. And we can just print the default TraceBack.
             await ee()
