@@ -487,9 +487,8 @@ class Fun(commands.Cog):
     @commands.command()
     async def ttt(self, ctx, player2: commands.MemberConverter):
         """Starts a Tic-Tac-Toe game with the specified player!"""
-        player1 = random.choice(ctx.author, player2)
-        player2 = player2 if ctx.author == player1 else player1
-        current_player = 1
+        player1 = ctx.author
+        current_player = randint(1, 2)
         running = True
         used_emojis = []
         counter = 0
