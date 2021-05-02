@@ -4,7 +4,7 @@ from discord.ext import commands
 class PogmasHelpCommand(commands.HelpCommand):
     def __init__(self):
         super().__init__(command_attrs={
-            'help': 'Shows help about the bot, a command, a cog or a category'  # This is the command.help string
+            'help': 'Shows help about the bot, a command, a cog or a category.'  # This is the command.help string
 })
     def get_command_signature(self, command):
         """Method to return a commands name and signature"""
