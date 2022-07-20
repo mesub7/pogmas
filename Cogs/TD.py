@@ -97,7 +97,7 @@ class TD(commands.Cog):
     async def opt_out(self, ctx, *, reason):
         def check(reaction, user):
             return user == ctx.author
-        if any('m0nster', 'monster', 'poo', 'pee' for word in reason.lower()):
+        if reason.lower() in ['m0nster', 'monster', 'poo', 'pee']:
             await ctx.message.add_reaction('🚫')
             return
         elif 'help' in reason.lower():
