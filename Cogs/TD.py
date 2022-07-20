@@ -13,6 +13,7 @@ class TD(commands.Cog):
         self.bot = bot
         self.quest_enq.start()
         self.quest_pick.start()
+        self.questioner_reminder.start()
 
     @commands.Cog.listener()
     async def on_message(self, message):
@@ -56,18 +57,6 @@ class TD(commands.Cog):
                     for role in message.author.roles
                 ):
                     await message.channel.send(role2.mention)
-
-    #@tasks.loop(hours=24)
-    #async def auto_brexit(self):
-        #channel = self.bot.get_channel(395956678412992523)
-        #dt  = datetime.datetime
-        #now = dt.now()
-        #cd=dt(year=2021, month=1,day=1) - dt(year=now.year, month=now.month, day=now.day)
-        #await channel.send(f'There are `'+str(cd)[:str(cd).find(",")]+'` until <:BR:772541846357278791><:EX:772541846358196254><:IT:756911540728496220>')
-
-    #@auto_brexit.before_loop
-    #async def before_brexit(self):
-        #await self.bot.wait_until_ready()
 
     @tasks.loop(hours=24)
     async def quest_enq(self):
@@ -180,9 +169,6 @@ class TD(commands.Cog):
             formatted_questioners = x.join(str(item) for item in list)
         else:
             formatted_questioners = 'No questioners found.'
-        #embed = discord.Embed(title='All questioners.',
-        #description=f'{formatted_questioners}', colour=discord.Colour.orange())
-        #paginator.add_line(embed)
         for page in paginator.pages:
             await ctx.send(page)
 
@@ -201,6 +187,30 @@ class TD(commands.Cog):
                 await self.bot.db.execute('INSERT INTO questioner(id, times) VALUES(?,?)', (person.id, times))
                 await self.bot.db.commit()
                 await ctx.send(f'`{person}`, has now been added to the db and has been a questioner `{times}` times!')
+
+    @questioner.command(help='Sets the questioner for daily reminders')
+    async def remind(self, ctx, person: discord.User):
+        if not person:
+            await ctx.send(f'{person} is the current questioner!')
+        await ctx.send(f'{person} is the current questioner!')
+        self.bot.questioner = person
+
+    @tasks.loop(hours=24)
+    async def questioner_reminder(self):
+        try:
+            await self.bot.questioner.send(f'Hello **{self.bot.questioner.name}**, don\'t forget to send your daily question in <#653685492100890635>!')
+        except Exception:
+            channel = self.bot.get_channel(767416350552490025)
+            await channel.send('Today\'s task has failed. Will retry tomorrow...')
+
+    @questioner_reminder.before_loop
+    async def before_remind(self):
+        await self.bot.wait_until_ready()
+        now = datetime.datetime.now().astimezone()
+        next_run = now.replace(hour=6, minute=0, second=0)
+        if next_run < now:
+            next_run += datetime.timedelta(days=1)
+        await discord.utils.sleep_until(next_run)
 
 
 def setup(bot):
