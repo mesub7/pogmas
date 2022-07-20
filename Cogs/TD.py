@@ -5,6 +5,7 @@ import datetime
 import Cogs.Checks as k
 import aiosqlite
 
+
 class TD(commands.Cog):
     """The Transport Dash Cog. Contains functions exclusive to Transport Dash"""
 
@@ -49,8 +50,10 @@ class TD(commands.Cog):
             role2 = message.guild.get_role(790631558976503830)
             if 653685492100890635 == message.channel.id and ('#QoTD') in message.content:
                 if any(
-                role.id in [665930105909936139, 407585313129758720, 521372852952498179] #Questioner, Sever manager, Owner
-                for role in message.author.roles
+                    # Questioner, Sever manager, Owner
+                    role.id in [665930105909936139,
+                                407585313129758720, 521372852952498179]
+                    for role in message.author.roles
                 ):
                     await message.channel.send(role2.mention)
 
@@ -94,7 +97,7 @@ class TD(commands.Cog):
     async def opt_out(self, ctx, *, reason):
         def check(reaction, user):
             return user == ctx.author
-        if any('m0nster','monster', 'poo', 'pee') in reason.lower():
+        if any(['m0nster', 'monster', 'poo', 'pee']) in reason.lower():
             await ctx.message.add_reaction('🚫')
             return
         elif 'help' in reason.lower():
@@ -145,12 +148,13 @@ class TD(commands.Cog):
         row = await x.fetchall()
         for rows in row:
             user = self.bot.get_user(rows['id'])
-            list.append(f"{str(user) + ' (' + str(rows['id']) + ')  ' + str(rows['times'])}")
+            list.append(
+                f"{str(user) + ' (' + str(rows['id']) + ')  ' + str(rows['times'])}")
         return None if not list else list
 
     @commands.check(k.lvl3)
     @commands.group(invoke_without_command=True)
-    async def questioner(self, ctx, *questioners:discord.User):
+    async def questioner(self, ctx, *questioners: discord.User):
         async with ctx.channel.typing():
             list = []
             self.bot.db.row_factory = aiosqlite.Row
@@ -161,7 +165,8 @@ class TD(commands.Cog):
                 if row is None:
                     list.append(f'{person} has not been a questioner')
                 else:
-                    list.append(f"{person} has been a questioner `{row['times']}` time(s).")
+                    list.append(
+                        f"{person} has been a questioner `{row['times']}` time(s).")
         await ctx.send(f'```\n{x.join(str(item) for item in list)}\n```')
 
     @questioner.command(help='Lists questioners')
@@ -182,8 +187,8 @@ class TD(commands.Cog):
             await ctx.send(page)
 
     @questioner.command(help='Adds or edits a questioner to the list.',
-    description='The number will override (not add) the current number in the list')
-    async def add(self, ctx, person:discord.User, times:float = 1):
+                        description='The number will override (not add) the current number in the list')
+    async def add(self, ctx, person: discord.User, times: float = 1):
         async with ctx.channel.typing():
             query = await self.bot.db.execute('SELECT * FROM questioner WHERE id=?;', (person.id,))
             row = await query.fetchone()
@@ -196,6 +201,7 @@ class TD(commands.Cog):
                 await self.bot.db.execute('INSERT INTO questioner(id, times) VALUES(?,?)', (person.id, times))
                 await self.bot.db.commit()
                 await ctx.send(f'`{person}`, has now been added to the db and has been a questioner `{times}` times!')
+
 
 def setup(bot):
     bot.add_cog(TD(bot))
