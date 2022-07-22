@@ -62,9 +62,9 @@ class TD(commands.Cog):
     async def quest_enq(self):
         dt = datetime.datetime
         now = dt.now()
-        channel = self.bot.get_channel(720709557445460028)
+        owner = self.bot.get_user(self.bot.owner_id)
         if now.weekday() == 5:
-            await channel.send('<@414530505585721357> Don\'t forget to ask about questioners!')
+            await owner.send('<@414530505585721357> Don\'t forget to ask about questioners!')
 
     @quest_enq.before_loop
     async def before_qe(self):
@@ -74,9 +74,9 @@ class TD(commands.Cog):
     async def quest_pick(self):
         dt = datetime.datetime
         now = dt.now()
-        channel = self.bot.get_channel(720709557445460028)
+        owner = self.bot.get_user(self.bot.owner_id)
         if now.weekday() == 6:
-            await channel.send('<@414530505585721357> Don\'t forget to pick a questioner!')
+            await owner.send('<@414530505585721357> Don\'t forget to pick a questioner!')
 
     @quest_pick.before_loop
     async def before_pick(self):
